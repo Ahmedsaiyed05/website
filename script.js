@@ -3,18 +3,36 @@
 // ========================================
 
 // Profile image loading verification
-window.addEventListener('load', () => {
+window.addEventListener('DOMContentLoaded', () => {
     const profileImg = document.querySelector('.profile-img');
+
+    console.log('=== Profile Image Debug ===');
+    console.log('Image element found:', !!profileImg);
+
     if (profileImg) {
+        console.log('Image src:', profileImg.src);
+        console.log('Image complete:', profileImg.complete);
+        console.log('Image naturalWidth:', profileImg.naturalWidth);
+        console.log('Image naturalHeight:', profileImg.naturalHeight);
+
         profileImg.addEventListener('error', function() {
-            console.log('Profile image failed to load. Using fallback gradient.');
+            console.error('❌ Profile image failed to load!');
+            console.log('Failed src:', this.src);
             this.parentElement.style.background = 'linear-gradient(135deg, #ff0040, #0066ff)';
             this.style.display = 'none';
         });
 
         profileImg.addEventListener('load', function() {
-            console.log('Profile image loaded successfully!');
+            console.log('✅ Profile image loaded successfully!');
+            console.log('Loaded dimensions:', this.naturalWidth, 'x', this.naturalHeight);
         });
+
+        // Check if image is already loaded
+        if (profileImg.complete && profileImg.naturalWidth > 0) {
+            console.log('✅ Image was already loaded from cache');
+        } else if (profileImg.complete) {
+            console.error('❌ Image completed but failed to load (broken link)');
+        }
     }
 });
 
