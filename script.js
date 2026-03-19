@@ -2,6 +2,22 @@
 // NEON PORTFOLIO JAVASCRIPT
 // ========================================
 
+// Profile image loading verification
+window.addEventListener('load', () => {
+    const profileImg = document.querySelector('.profile-img');
+    if (profileImg) {
+        profileImg.addEventListener('error', function() {
+            console.log('Profile image failed to load. Using fallback gradient.');
+            this.parentElement.style.background = 'linear-gradient(135deg, #ff0040, #0066ff)';
+            this.style.display = 'none';
+        });
+
+        profileImg.addEventListener('load', function() {
+            console.log('Profile image loaded successfully!');
+        });
+    }
+});
+
 // Navigation scroll effect
 const navbar = document.getElementById('navbar');
 let lastScroll = 0;
