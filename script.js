@@ -1,180 +1,156 @@
-// ========================================
-// NEON PORTFOLIO JAVASCRIPT
-// ========================================
-
-// Profile image loading verification
-window.addEventListener('DOMContentLoaded', () => {
-    const profileImg = document.querySelector('.profile-img');
-
-    console.log('=== Profile Image Debug ===');
-    console.log('Image element found:', !!profileImg);
-
-    if (profileImg) {
-        console.log('Image src:', profileImg.src);
-        console.log('Image complete:', profileImg.complete);
-        console.log('Image naturalWidth:', profileImg.naturalWidth);
-        console.log('Image naturalHeight:', profileImg.naturalHeight);
-
-        profileImg.addEventListener('error', function() {
-            console.error('Profile image failed to load.');
-            console.log('Failed src:', this.src);
-            this.parentElement.style.background = 'linear-gradient(135deg, #0f766e, #2563eb)';
-            this.style.display = 'none';
-        });
-
-        profileImg.addEventListener('load', function() {
-            console.log('Profile image loaded successfully.');
-            console.log('Loaded dimensions:', this.naturalWidth, 'x', this.naturalHeight);
-        });
-
-        // Check if image is already loaded
-        if (profileImg.complete && profileImg.naturalWidth > 0) {
-            console.log('Image was already loaded from cache.');
-        } else if (profileImg.complete) {
-            console.error('Image completed but failed to load (broken link).');
-        }
-    }
-});
-
-// Navigation scroll effect
 const navbar = document.getElementById('navbar');
-let lastScroll = 0;
-
-window.addEventListener('scroll', () => {
-    const currentScroll = window.pageYOffset;
-
-    if (currentScroll > 100) {
-        navbar.classList.add('scrolled');
-    } else {
-        navbar.classList.remove('scrolled');
-    }
-
-    lastScroll = currentScroll;
-});
-
-// Mobile menu toggle
 const hamburger = document.getElementById('hamburger');
 const navMenu = document.getElementById('navMenu');
 const navLinks = document.querySelectorAll('.nav-link');
+const sections = document.querySelectorAll('section[id]');
+const shapes = document.querySelectorAll('.shape');
+const cards = document.querySelectorAll('.glass-card');
 
-hamburger.addEventListener('click', () => {
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// Profile image fallback
+window.addEventListener('DOMContentLoaded', () => {
+    const profileImg = document.querySelector('.profile-img');
+
+    if (!profileImg) return;
+
+    profileImg.addEventListener('error', function() {
+        this.parentElement.style.background = 'linear-gradient(135deg, #0f766e, #2563eb)';
+        this.style.display = 'none';
+    });
+});
+
+// Mobile menu
+hamburger?.addEventListener('click', () => {
     hamburger.classList.toggle('active');
     navMenu.classList.toggle('active');
 });
 
-// Close mobile menu when clicking a link
 navLinks.forEach(link => {
-    link.addEventListener('click', () => {
-        hamburger.classList.remove('active');
+    link.addEventListener('click', (event) => {
+        event.preventDefault();
+        hamburger?.classList.remove('active');
+        navMenu?.classList.remove('active');
+
+        const target = document.querySelector(link.getAttribute('href'));
+        if (!target) return;
+
+        window.scrollTo({
+            top: target.offsetTop - 76,
+            behavior: prefersReducedMotion ? 'auto' : 'smooth'
+        });
+    });
+});
+
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && navMenu?.classList.contains('active')) {
+        hamburger?.classList.remove('active');
         navMenu.classList.remove('active');
-    });
+    }
 });
 
-// Smooth scroll for navigation links
-navLinks.forEach(link => {
-    link.addEventListener('click', (e) => {
-        e.preventDefault();
-        const targetId = link.getAttribute('href');
-        const targetSection = document.querySelector(targetId);
-
-        if (targetSection) {
-            const offsetTop = targetSection.offsetTop - 80;
-            window.scrollTo({
-                top: offsetTop,
-                behavior: 'smooth'
-            });
-        }
-    });
-});
-
-// Scroll animations (fade in on scroll)
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -100px 0px'
-};
-
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-        }
-    });
-}, observerOptions);
-
-// Observe all sections and cards
-const animatedElements = document.querySelectorAll(
-    '.glass-card, .timeline-item, .skill-category, .education-card, .highlight-card, .section-title'
-);
-
-animatedElements.forEach(el => {
-    el.classList.add('fade-in');
-    observer.observe(el);
-});
-
-// Animated counter for statistics
+// Counters
 const animateCounter = (element, target) => {
-    let current = 0;
-    const increment = target / 100;
-    const duration = 2000;
-    const stepTime = duration / 100;
+    if (element.dataset.done) return;
 
-    const timer = setInterval(() => {
-        current += increment;
-        if (current >= target) {
-            element.textContent = target + '+';
-            clearInterval(timer);
+    element.dataset.done = 'true';
+    const duration = prefersReducedMotion ? 1 : 1400;
+    const start = performance.now();
+
+    const tick = (now) => {
+        const progress = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        element.textContent = `${Math.floor(eased * target)}+`;
+
+        if (progress < 1) {
+            requestAnimationFrame(tick);
         } else {
-            element.textContent = Math.floor(current) + '+';
+            element.textContent = `${target}+`;
         }
-    }, stepTime);
+    };
+
+    requestAnimationFrame(tick);
 };
 
-// Trigger counter animation when stats section is visible
-const statNumbers = document.querySelectorAll('.stat-number');
-const statsObserver = new IntersectionObserver((entries) => {
+const statObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            const target = parseInt(entry.target.getAttribute('data-target'));
-            animateCounter(entry.target, target);
-            statsObserver.unobserve(entry.target);
-        }
+        if (!entry.isIntersecting) return;
+        animateCounter(entry.target, Number(entry.target.dataset.target || 0));
+        statObserver.unobserve(entry.target);
     });
-}, { threshold: 0.5 });
+}, { threshold: 0.45 });
 
-statNumbers.forEach(stat => statsObserver.observe(stat));
+document.querySelectorAll('.stat-number').forEach(stat => statObserver.observe(stat));
 
-// Animate skill bars when they come into view
-const skillBars = document.querySelectorAll('.skill-progress');
-const skillsObserver = new IntersectionObserver((entries) => {
+// Skill bars
+const skillObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            const progress = entry.target.getAttribute('data-progress');
-            setTimeout(() => {
-                entry.target.style.width = progress + '%';
-            }, 200);
-            skillsObserver.unobserve(entry.target);
-        }
+        if (!entry.isIntersecting) return;
+        entry.target.style.width = `${entry.target.dataset.progress}%`;
+        skillObserver.unobserve(entry.target);
     });
-}, { threshold: 0.5 });
+}, { threshold: 0.35 });
 
-skillBars.forEach(bar => skillsObserver.observe(bar));
+document.querySelectorAll('.skill-progress').forEach(bar => skillObserver.observe(bar));
+
+// Smooth scroll-driven experience slideshow
+const experience = document.querySelector('.experience');
+const timelineItems = Array.from(document.querySelectorAll('.timeline-item'));
+const timeline = document.querySelector('.timeline');
+
+if (timeline && timelineItems.length) {
+    const nav = document.createElement('div');
+    nav.className = 'timeline-nav';
+
+    timelineItems.forEach((item, index) => {
+        item.style.setProperty('--slide-index', index);
+
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'timeline-nav-dot';
+        button.setAttribute('aria-label', `Show experience ${index + 1}`);
+        button.addEventListener('click', () => {
+            if (!experience) return;
+            const maxIndex = Math.max(timelineItems.length - 1, 1);
+            const targetTop = experience.offsetTop + (experience.offsetHeight - window.innerHeight) * (index / maxIndex);
+            window.scrollTo({
+                top: targetTop,
+                behavior: prefersReducedMotion ? 'auto' : 'smooth'
+            });
+        });
+        nav.appendChild(button);
+    });
+
+    timeline.appendChild(nav);
+}
+
+let activeExperienceIndex = 0;
+
+const setActiveExperience = (index) => {
+    if (!timelineItems.length || index === activeExperienceIndex && timelineItems[index]?.classList.contains('active')) return;
+
+    activeExperienceIndex = index;
+    timelineItems.forEach((item, itemIndex) => {
+        item.classList.toggle('active', itemIndex === index);
+        item.classList.toggle('previous', itemIndex < index);
+    });
+
+    document.querySelectorAll('.timeline-nav-dot').forEach((dot, dotIndex) => {
+        dot.classList.toggle('active', dotIndex === index);
+    });
+};
+
+setActiveExperience(0);
 
 // Contact form handling
 const contactForm = document.getElementById('contactForm');
 
-contactForm.addEventListener('submit', (e) => {
-    e.preventDefault();
+contactForm?.addEventListener('submit', (event) => {
+    event.preventDefault();
 
-    const formData = {
-        name: document.getElementById('name').value,
-        email: document.getElementById('email').value,
-        subject: document.getElementById('subject').value,
-        message: document.getElementById('message').value
-    };
-
-    // Simulate form submission
     const submitBtn = contactForm.querySelector('button[type="submit"]');
     const originalText = submitBtn.innerHTML;
+
     submitBtn.innerHTML = '<span>Sending...</span>';
     submitBtn.disabled = true;
 
@@ -187,127 +163,75 @@ contactForm.addEventListener('submit', (e) => {
             submitBtn.style.background = '';
             submitBtn.disabled = false;
             contactForm.reset();
-        }, 2000);
-    }, 1500);
-
-    console.log('Form submitted:', formData);
+        }, 1800);
+    }, 900);
 });
 
-// Parallax effect for floating shapes
-const shapes = document.querySelectorAll('.shape');
-
-window.addEventListener('mousemove', (e) => {
-    const mouseX = e.clientX / window.innerWidth;
-    const mouseY = e.clientY / window.innerHeight;
-
-    shapes.forEach((shape, index) => {
-        const speed = (index + 1) * 20;
-        const x = (mouseX - 0.5) * speed;
-        const y = (mouseY - 0.5) * speed;
-        shape.style.transform = `translate(${x}px, ${y}px)`;
+// Card light tracking
+cards.forEach(card => {
+    card.addEventListener('pointermove', (event) => {
+        const rect = card.getBoundingClientRect();
+        card.style.setProperty('--mouse-x', `${event.clientX - rect.left}px`);
+        card.style.setProperty('--mouse-y', `${event.clientY - rect.top}px`);
     });
 });
 
-// Active navigation link highlighting
-const sections = document.querySelectorAll('section[id]');
+// One smooth render loop for scroll and subtle parallax
+let latestMouseX = 0.5;
+let latestMouseY = 0.5;
+let ticking = false;
 
-window.addEventListener('scroll', () => {
-    const scrollY = window.pageYOffset;
+window.addEventListener('pointermove', (event) => {
+    latestMouseX = event.clientX / window.innerWidth;
+    latestMouseY = event.clientY / window.innerHeight;
+    requestTick();
+}, { passive: true });
+
+window.addEventListener('scroll', requestTick, { passive: true });
+window.addEventListener('resize', requestTick);
+
+function requestTick() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(updatePageState);
+}
+
+function updatePageState() {
+    ticking = false;
+    const scrollY = window.scrollY;
+
+    navbar?.classList.toggle('scrolled', scrollY > 80);
 
     sections.forEach(section => {
-        const sectionHeight = section.offsetHeight;
-        const sectionTop = section.offsetTop - 100;
-        const sectionId = section.getAttribute('id');
-        const correspondingLink = document.querySelector(`.nav-link[href="#${sectionId}"]`);
-
-        if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
-            navLinks.forEach(link => link.classList.remove('active'));
-            if (correspondingLink) {
-                correspondingLink.classList.add('active');
-            }
-        }
+        const sectionTop = section.offsetTop - 110;
+        const sectionBottom = sectionTop + section.offsetHeight;
+        const link = document.querySelector(`.nav-link[href="#${section.id}"]`);
+        link?.classList.toggle('active', scrollY >= sectionTop && scrollY < sectionBottom);
     });
-});
 
-// Add glow effect on cards on hover
-const cards = document.querySelectorAll('.glass-card');
+    if (experience && timelineItems.length) {
+        const scrollable = Math.max(experience.offsetHeight - window.innerHeight, 1);
+        const progress = Math.min(Math.max((scrollY - experience.offsetTop) / scrollable, 0), 1);
+        const index = Math.min(timelineItems.length - 1, Math.round(progress * (timelineItems.length - 1)));
+        setActiveExperience(index);
+    }
 
-cards.forEach(card => {
-    card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
+    if (!prefersReducedMotion) {
+        shapes.forEach((shape, index) => {
+            const speed = (index + 1) * 7;
+            const x = (latestMouseX - 0.5) * speed;
+            const y = (latestMouseY - 0.5) * speed;
+            shape.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+        });
+    }
+}
 
-        card.style.setProperty('--mouse-x', `${x}px`);
-        card.style.setProperty('--mouse-y', `${y}px`);
-    });
-});
-
-// Initialize page load animations
 window.addEventListener('load', () => {
     document.body.classList.add('loaded');
-
-    // Trigger hero animations
-    setTimeout(() => {
-        document.querySelector('.hero-text')?.classList.add('visible');
-    }, 300);
+    requestTick();
 });
 
-// Dynamic year in footer
 const footerYear = document.querySelector('.footer-content p');
 if (footerYear) {
-    const currentYear = new Date().getFullYear();
-    footerYear.innerHTML = footerYear.innerHTML.replace('2026', currentYear);
+    footerYear.innerHTML = footerYear.innerHTML.replace('2026', new Date().getFullYear());
 }
-
-// Add keyboard navigation support
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && navMenu.classList.contains('active')) {
-        hamburger.classList.remove('active');
-        navMenu.classList.remove('active');
-    }
-});
-
-// Performance optimization: Throttle scroll events
-function throttle(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
-
-// Apply throttling to scroll handlers
-const throttledScroll = throttle(() => {
-    const scrollY = window.pageYOffset;
-
-    sections.forEach(section => {
-        const sectionHeight = section.offsetHeight;
-        const sectionTop = section.offsetTop - 100;
-        const sectionId = section.getAttribute('id');
-        const correspondingLink = document.querySelector(`.nav-link[href="#${sectionId}"]`);
-
-        if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
-            navLinks.forEach(link => link.classList.remove('active'));
-            if (correspondingLink) {
-                correspondingLink.classList.add('active');
-            }
-        }
-    });
-
-    if (scrollY > 100) {
-        navbar.classList.add('scrolled');
-    } else {
-        navbar.classList.remove('scrolled');
-    }
-}, 100);
-
-window.addEventListener('scroll', throttledScroll);
-
-// Console signature
-console.log('%cAhmed Saiyed | DevOps & Cloud Engineer', 'color: #0f766e; font-size: 20px; font-weight: bold;');
-console.log('%cPortfolio Website | Built for cloud, automation, and secure delivery', 'color: #2563eb; font-size: 14px;');
