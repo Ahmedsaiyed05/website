@@ -16,22 +16,22 @@ window.addEventListener('DOMContentLoaded', () => {
         console.log('Image naturalHeight:', profileImg.naturalHeight);
 
         profileImg.addEventListener('error', function() {
-            console.error('❌ Profile image failed to load!');
+            console.error('Profile image failed to load.');
             console.log('Failed src:', this.src);
-            this.parentElement.style.background = 'linear-gradient(135deg, #ff0040, #0066ff)';
+            this.parentElement.style.background = 'linear-gradient(135deg, #0f766e, #2563eb)';
             this.style.display = 'none';
         });
 
         profileImg.addEventListener('load', function() {
-            console.log('✅ Profile image loaded successfully!');
+            console.log('Profile image loaded successfully.');
             console.log('Loaded dimensions:', this.naturalWidth, 'x', this.naturalHeight);
         });
 
         // Check if image is already loaded
         if (profileImg.complete && profileImg.naturalWidth > 0) {
-            console.log('✅ Image was already loaded from cache');
+            console.log('Image was already loaded from cache.');
         } else if (profileImg.complete) {
-            console.error('❌ Image completed but failed to load (broken link)');
+            console.error('Image completed but failed to load (broken link).');
         }
     }
 });
@@ -159,24 +159,6 @@ const skillsObserver = new IntersectionObserver((entries) => {
 
 skillBars.forEach(bar => skillsObserver.observe(bar));
 
-// Typing effect for hero section (optional enhancement)
-const heroTitle = document.querySelector('.hero-title');
-if (heroTitle) {
-    const originalText = heroTitle.textContent;
-    heroTitle.textContent = '';
-    let charIndex = 0;
-
-    const typeWriter = () => {
-        if (charIndex < originalText.length) {
-            heroTitle.textContent += originalText.charAt(charIndex);
-            charIndex++;
-            setTimeout(typeWriter, 100);
-        }
-    };
-
-    setTimeout(typeWriter, 1500);
-}
-
 // Contact form handling
 const contactForm = document.getElementById('contactForm');
 
@@ -197,8 +179,8 @@ contactForm.addEventListener('submit', (e) => {
     submitBtn.disabled = true;
 
     setTimeout(() => {
-        submitBtn.innerHTML = '<span>Message Sent! ✓</span>';
-        submitBtn.style.background = 'linear-gradient(135deg, #39ff14, #00f5ff)';
+        submitBtn.innerHTML = '<span>Message Sent</span>';
+        submitBtn.style.background = 'linear-gradient(135deg, #0f766e, #2563eb)';
 
         setTimeout(() => {
             submitBtn.innerHTML = originalText;
@@ -327,5 +309,5 @@ const throttledScroll = throttle(() => {
 window.addEventListener('scroll', throttledScroll);
 
 // Console signature
-console.log('%c🚀 Ahmed Saiyed | DevOps & Cloud Engineer', 'color: #00f5ff; font-size: 20px; font-weight: bold;');
-console.log('%cPortfolio Website | Built with passion and code', 'color: #ff00ff; font-size: 14px;');
+console.log('%cAhmed Saiyed | DevOps & Cloud Engineer', 'color: #0f766e; font-size: 20px; font-weight: bold;');
+console.log('%cPortfolio Website | Built for cloud, automation, and secure delivery', 'color: #2563eb; font-size: 14px;');
