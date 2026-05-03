@@ -93,54 +93,22 @@ const skillObserver = new IntersectionObserver((entries) => {
 
 document.querySelectorAll('.skill-progress').forEach(bar => skillObserver.observe(bar));
 
-// Smooth scroll-driven experience slideshow
-const experience = document.querySelector('.experience');
-const timelineItems = Array.from(document.querySelectorAll('.timeline-item'));
-const timeline = document.querySelector('.timeline');
-
-if (timeline && timelineItems.length) {
-    const nav = document.createElement('div');
-    nav.className = 'timeline-nav';
-
-    timelineItems.forEach((item, index) => {
-        item.style.setProperty('--slide-index', index);
-
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.className = 'timeline-nav-dot';
-        button.setAttribute('aria-label', `Show experience ${index + 1}`);
-        button.addEventListener('click', () => {
-            if (!experience) return;
-            const maxIndex = Math.max(timelineItems.length - 1, 1);
-            const targetTop = experience.offsetTop + (experience.offsetHeight - window.innerHeight) * (index / maxIndex);
-            window.scrollTo({
-                top: targetTop,
-                behavior: prefersReducedMotion ? 'auto' : 'smooth'
-            });
-        });
-        nav.appendChild(button);
+// Smooth entrance animations
+const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target);
     });
+}, {
+    threshold: 0.12,
+    rootMargin: '0px 0px -80px 0px'
+});
 
-    timeline.appendChild(nav);
-}
-
-let activeExperienceIndex = 0;
-
-const setActiveExperience = (index) => {
-    if (!timelineItems.length || index === activeExperienceIndex && timelineItems[index]?.classList.contains('active')) return;
-
-    activeExperienceIndex = index;
-    timelineItems.forEach((item, itemIndex) => {
-        item.classList.toggle('active', itemIndex === index);
-        item.classList.toggle('previous', itemIndex < index);
-    });
-
-    document.querySelectorAll('.timeline-nav-dot').forEach((dot, dotIndex) => {
-        dot.classList.toggle('active', dotIndex === index);
-    });
-};
-
-setActiveExperience(0);
+document.querySelectorAll('.glass-card, .timeline-item, .skill-category, .education-card, .highlight-card, .section-title').forEach(element => {
+    element.classList.add('fade-in');
+    revealObserver.observe(element);
+});
 
 // Contact form handling
 const contactForm = document.getElementById('contactForm');
@@ -208,13 +176,6 @@ function updatePageState() {
         const link = document.querySelector(`.nav-link[href="#${section.id}"]`);
         link?.classList.toggle('active', scrollY >= sectionTop && scrollY < sectionBottom);
     });
-
-    if (experience && timelineItems.length) {
-        const scrollable = Math.max(experience.offsetHeight - window.innerHeight, 1);
-        const progress = Math.min(Math.max((scrollY - experience.offsetTop) / scrollable, 0), 1);
-        const index = Math.min(timelineItems.length - 1, Math.round(progress * (timelineItems.length - 1)));
-        setActiveExperience(index);
-    }
 
     if (!prefersReducedMotion) {
         shapes.forEach((shape, index) => {
