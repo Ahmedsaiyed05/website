@@ -11,12 +11,35 @@ const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)
 // Profile image fallback
 window.addEventListener('DOMContentLoaded', () => {
     const profileImg = document.querySelector('.profile-img');
-
     if (!profileImg) return;
-
-    profileImg.addEventListener('error', function() {
+    profileImg.addEventListener('error', function () {
         this.parentElement.style.background = 'linear-gradient(135deg, #0f766e, #2563eb)';
         this.style.display = 'none';
+    });
+
+    // Add stagger classes to timeline, skills, education, highlight cards
+    document.querySelectorAll('.timeline-item').forEach((el, i) => {
+        el.classList.add('fade-in', `stagger-${Math.min(i + 1, 5)}`);
+    });
+    document.querySelectorAll('.skill-category').forEach((el, i) => {
+        el.classList.add('fade-in', `stagger-${Math.min(i + 1, 5)}`);
+    });
+    document.querySelectorAll('.education-card').forEach((el, i) => {
+        el.classList.add('fade-in', `stagger-${i + 1}`);
+    });
+    document.querySelectorAll('.highlight-card').forEach((el, i) => {
+        el.classList.add('fade-in-right', `stagger-${i + 1}`);
+    });
+    document.querySelectorAll('.contact-link').forEach((el, i) => {
+        el.classList.add('fade-in', `stagger-${i + 1}`);
+    });
+
+    // Observe all fade-in elements
+    document.querySelectorAll('.glass-card, .section-title, .fade-in, .fade-in-left, .fade-in-right').forEach(el => {
+        if (!el.classList.contains('fade-in') && !el.classList.contains('fade-in-left') && !el.classList.contains('fade-in-right')) {
+            el.classList.add('fade-in');
+        }
+        revealObserver.observe(el);
     });
 });
 
@@ -31,10 +54,8 @@ navLinks.forEach(link => {
         event.preventDefault();
         hamburger?.classList.remove('active');
         navMenu?.classList.remove('active');
-
         const target = document.querySelector(link.getAttribute('href'));
         if (!target) return;
-
         window.scrollTo({
             top: target.offsetTop - 76,
             behavior: prefersReducedMotion ? 'auto' : 'smooth'
@@ -52,23 +73,16 @@ document.addEventListener('keydown', (event) => {
 // Counters
 const animateCounter = (element, target) => {
     if (element.dataset.done) return;
-
     element.dataset.done = 'true';
     const duration = prefersReducedMotion ? 1 : 1400;
     const start = performance.now();
-
     const tick = (now) => {
         const progress = Math.min((now - start) / duration, 1);
         const eased = 1 - Math.pow(1 - progress, 3);
         element.textContent = `${Math.floor(eased * target)}+`;
-
-        if (progress < 1) {
-            requestAnimationFrame(tick);
-        } else {
-            element.textContent = `${target}+`;
-        }
+        if (progress < 1) requestAnimationFrame(tick);
+        else element.textContent = `${target}+`;
     };
-
     requestAnimationFrame(tick);
 };
 
@@ -93,41 +107,28 @@ const skillObserver = new IntersectionObserver((entries) => {
 
 document.querySelectorAll('.skill-progress').forEach(bar => skillObserver.observe(bar));
 
-// Smooth entrance animations
+// Reveal observer
 const revealObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (!entry.isIntersecting) return;
         entry.target.classList.add('visible');
         revealObserver.unobserve(entry.target);
     });
-}, {
-    threshold: 0.12,
-    rootMargin: '0px 0px -80px 0px'
-});
+}, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
 
-document.querySelectorAll('.glass-card, .timeline-item, .skill-category, .education-card, .highlight-card, .section-title').forEach(element => {
-    element.classList.add('fade-in');
-    revealObserver.observe(element);
-});
-
-// Contact form handling
+// Contact form
 const contactForm = document.getElementById('contactForm');
-
 contactForm?.addEventListener('submit', (event) => {
     event.preventDefault();
-
     const submitBtn = contactForm.querySelector('button[type="submit"]');
-    const originalText = submitBtn.innerHTML;
-
+    const originalHTML = submitBtn.innerHTML;
     submitBtn.innerHTML = '<span>Sending...</span>';
     submitBtn.disabled = true;
-
     setTimeout(() => {
-        submitBtn.innerHTML = '<span>Message Sent</span>';
+        submitBtn.innerHTML = '<span>✓ Message Sent!</span>';
         submitBtn.style.background = 'linear-gradient(135deg, #0f766e, #2563eb)';
-
         setTimeout(() => {
-            submitBtn.innerHTML = originalText;
+            submitBtn.innerHTML = originalHTML;
             submitBtn.style.background = '';
             submitBtn.disabled = false;
             contactForm.reset();
@@ -144,7 +145,7 @@ cards.forEach(card => {
     });
 });
 
-// One smooth render loop for scroll and subtle parallax
+// Scroll / parallax render loop
 let latestMouseX = 0.5;
 let latestMouseY = 0.5;
 let ticking = false;
