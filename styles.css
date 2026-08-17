@@ -253,9 +253,11 @@ a {
 .shape-3 { bottom: 24%; left: 24%; animation-delay: 4s; background: #14b8a6; }
 .shape-4 { bottom: 36%; right: 32%; animation-delay: 6s; background: #f59e0b; }
 
+/* --px/--py are driven by the pointer/scroll loop in script.js; folding them
+   into the keyframes keeps the animation from overriding that parallax. */
 @keyframes floatNode {
-    0%, 100% { transform: translate3d(0, 0, 0); }
-    50% { transform: translate3d(18px, -24px, 0); }
+    0%, 100% { transform: translate3d(var(--px, 0px), var(--py, 0px), 0); }
+    50% { transform: translate3d(calc(var(--px, 0px) + 18px), calc(var(--py, 0px) - 24px), 0); }
 }
 
 .hero-content {
@@ -957,15 +959,543 @@ section {
     text-align: center;
 }
 
-.fade-in {
+/* =====================================================================
+   Motion layer
+   ===================================================================== */
+
+/* --- Page loader --------------------------------------------------- */
+body.is-loading {
+    overflow: hidden;
+}
+
+.page-loader {
+    position: fixed;
+    inset: 0;
+    z-index: 3000;
+    display: grid;
+    place-items: center;
+    background: #050d18;
+    transition: visibility 0s linear 1.05s;
+}
+
+.page-loader.done {
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.loader-curtain {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+        radial-gradient(circle at 30% 20%, rgba(45, 212, 191, 0.14), transparent 42%),
+        radial-gradient(circle at 75% 80%, rgba(96, 165, 250, 0.16), transparent 46%),
+        #050d18;
+    transform-origin: top;
+    transition: transform 0.95s var(--ease);
+}
+
+.page-loader.done .loader-curtain {
+    transform: scaleY(0);
+}
+
+.loader-inner {
+    width: min(520px, calc(100% - 48px));
+    transition: opacity 0.4s var(--ease), transform 0.55s var(--ease);
+}
+
+.page-loader.done .loader-inner {
+    opacity: 0;
+    transform: translateY(-28px);
+}
+
+.loader-word {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 0.45em;
+    color: #ffffff;
+    font-size: clamp(2rem, 7vw, 3.6rem);
+    font-weight: 850;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+}
+
+.loader-word span {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(100%);
+    animation: loaderWordIn 0.9s var(--ease) forwards;
+}
+
+.loader-word span:nth-child(2) {
+    color: var(--primary);
+    animation-delay: 0.12s;
+}
+
+@keyframes loaderWordIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.loader-meta {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin: 1.4rem 0 0.7rem;
+    color: var(--muted);
+    font-size: 0.74rem;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+
+.loader-count {
+    color: #ffffff;
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0;
+    line-height: 1;
+}
+
+.loader-count::after {
+    content: "%";
+    margin-left: 0.1em;
+    color: var(--primary);
+    font-size: 0.5em;
+    vertical-align: super;
+}
+
+.loader-bar {
+    height: 2px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(148, 163, 184, 0.2);
+}
+
+.loader-bar i {
+    display: block;
+    width: 0;
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+}
+
+/* --- Scroll progress ----------------------------------------------- */
+.scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1200;
+    height: 2px;
+    pointer-events: none;
+}
+
+.scroll-progress i {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+    transform: scaleX(0);
+    transform-origin: left;
+}
+
+/* --- Custom cursor -------------------------------------------------- */
+.cursor-dot,
+.cursor-ring {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 2500;
+    border-radius: 999px;
+    pointer-events: none;
+    opacity: 0;
+    will-change: transform;
+    transition: opacity 0.3s var(--ease);
+}
+
+.cursor-dot {
+    width: 6px;
+    height: 6px;
+    margin: -3px 0 0 -3px;
+    background: var(--primary);
+}
+
+.cursor-ring {
+    width: 36px;
+    height: 36px;
+    margin: -18px 0 0 -18px;
+    border: 1px solid rgba(45, 212, 191, 0.55);
+    transition: opacity 0.3s var(--ease), width 0.35s var(--ease), height 0.35s var(--ease),
+        margin 0.35s var(--ease), background 0.35s var(--ease), border-color 0.35s var(--ease);
+}
+
+body.cursor-ready .cursor-dot,
+body.cursor-ready .cursor-ring {
     opacity: 1;
-    transform: translateY(0);
-    transition: opacity 0.75s var(--ease), transform 0.75s var(--ease);
+}
+
+body.cursor-hover .cursor-ring {
+    width: 66px;
+    height: 66px;
+    margin: -33px 0 0 -33px;
+    background: rgba(45, 212, 191, 0.12);
+    border-color: rgba(45, 212, 191, 0.85);
+}
+
+body.cursor-hover .cursor-dot {
+    opacity: 0;
+}
+
+@media (hover: none), (pointer: coarse) {
+    .cursor-dot,
+    .cursor-ring {
+        display: none;
+    }
+}
+
+/* --- Split text ----------------------------------------------------- */
+[data-split] {
+    --split-delay: 0s;
+}
+
+.split-line {
+    display: block;
+}
+
+/* Each word masks its own units so multi-line text never bleeds */
+.split-word {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: top;
+    padding-bottom: 0.14em;
+    margin-bottom: -0.14em;
+}
+
+.hero-name[data-split] {
+    animation: none;
+}
+
+.split-unit {
+    display: inline-block;
+    transform: translate3d(0, 110%, 0) rotate(6deg);
+    opacity: 0;
+    will-change: transform, opacity;
+}
+
+.split-ready .split-unit {
+    transition: transform 0.85s var(--ease), opacity 0.6s var(--ease);
+    transition-delay: calc(var(--split-delay) + var(--i, 0) * 0.028s);
+}
+
+.split-in .split-unit {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+    opacity: 1;
+}
+
+/* --- Generic reveals ------------------------------------------------ */
+[data-anim] {
+    opacity: 0;
+    transform: translate3d(0, 26px, 0);
+    transition: opacity 0.8s var(--ease), transform 0.9s var(--ease);
+    transition-delay: var(--anim-delay, 0s);
+    will-change: transform, opacity;
+}
+
+[data-anim].in {
+    opacity: 1;
+    transform: none;
+}
+
+/* Depth entrance for cards — the 3D scroll feel */
+.fade-in {
+    opacity: 0;
+    transform: perspective(1200px) translate3d(0, 56px, -90px) rotateX(9deg);
+    transition: opacity 0.85s var(--ease), transform 1s var(--ease);
+    will-change: transform, opacity;
 }
 
 .fade-in.visible {
     opacity: 1;
+    transform: perspective(1200px) translate3d(0, 0, 0) rotateX(0deg);
+}
+
+.stagger-child {
+    opacity: 0;
+    transform: translate3d(0, 20px, 0) scale(0.96);
+    transition: opacity 0.6s var(--ease), transform 0.7s var(--ease);
+    transition-delay: calc(var(--i, 0) * 0.045s);
+}
+
+.stagger-in .stagger-child {
+    opacity: 1;
+    transform: none;
+}
+
+/* Timeline items arrive from their own side, with a slight Y rotation */
+.timeline-item.fade-in {
+    transform: perspective(1100px) translate3d(-60px, 40px, -70px) rotateY(9deg);
+}
+
+.timeline-item:nth-child(even).fade-in {
+    transform: perspective(1100px) translate3d(60px, 40px, -70px) rotateY(-9deg);
+}
+
+.timeline-item.fade-in.visible {
+    transform: perspective(1100px) translate3d(0, 0, 0) rotateY(0deg);
+}
+
+/* Timeline spine draws as you scroll */
+.timeline::before {
+    transform: translateX(-50%) scaleY(var(--spine, 0));
+    transform-origin: top center;
+    transition: transform 0.15s linear;
+}
+
+/* --- Marquee -------------------------------------------------------- */
+.marquee {
+    position: relative;
+    overflow: hidden;
+    padding: 1.1rem 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    background: linear-gradient(90deg, rgba(20, 184, 166, 0.08), rgba(37, 99, 235, 0.08));
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+.marquee-track {
+    display: flex;
+    width: max-content;
+    will-change: transform;
+}
+
+.marquee-group {
+    display: flex;
+    align-items: center;
+    gap: 1.4rem;
+    padding-right: 1.4rem;
+    flex: 0 0 auto;
+}
+
+.marquee-item {
+    color: var(--ink);
+    font-size: clamp(1.1rem, 2.6vw, 1.9rem);
+    font-weight: 850;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.marquee-sep {
+    color: var(--primary);
+    font-size: clamp(1.1rem, 2.6vw, 1.9rem);
+    font-weight: 400;
+}
+
+/* --- 3D tilt cards ---------------------------------------------------
+   The transform is built entirely from custom properties so the scroll
+   reveal (--revealY/--revealZ) and the pointer tilt (--rx/--ry/--ty) can
+   share one transform without fighting each other. Doubling the class
+   keeps this ahead of `.fade-in.visible`. */
+.tilt-3d.tilt-3d {
+    transform-style: preserve-3d;
+    transform:
+        perspective(900px)
+        rotateX(calc(var(--rx, 0deg) + var(--revealX, 0deg)))
+        rotateY(var(--ry, 0deg))
+        translate3d(0, calc(var(--ty, 0px) + var(--revealY, 0px)), var(--revealZ, 0px));
+    transition: transform 0.9s var(--ease), box-shadow 0.5s var(--ease), border-color 0.5s var(--ease);
+}
+
+.tilt-3d.tilting.tilting {
+    transition: transform 0.12s linear, box-shadow 0.5s var(--ease), border-color 0.5s var(--ease);
+}
+
+[data-anim].tilt-3d {
+    --revealY: 30px;
+    --revealZ: -60px;
+}
+
+[data-anim].in.tilt-3d {
+    --revealY: 0px;
+    --revealZ: 0px;
+}
+
+.fade-in.tilt-3d {
+    --revealY: 56px;
+    --revealZ: -90px;
+    --revealX: 9deg;
+}
+
+.fade-in.visible.tilt-3d {
+    --revealY: 0px;
+    --revealZ: 0px;
+    --revealX: 0deg;
+}
+
+/* Tilt owns the transform, so the older hover lift moves into --ty */
+.glass-card.tilt-3d:hover,
+.highlight-card.tilt-3d:hover {
+    --ty: -5px;
+}
+
+.profile-card.tilt-3d {
+    animation: none;
+}
+
+[data-tilt-layer] {
+    transform: translate3d(0, 0, calc(var(--depth, 0) * 1px));
+    transition: transform 0.35s var(--ease);
+}
+
+.tilt-3d.tilting [data-tilt-layer] {
+    transition: transform 0.12s linear;
+}
+
+/* --- Magnetic buttons ------------------------------------------------ */
+.magnetic,
+.btn {
+    will-change: transform;
+}
+
+.btn.magnetized {
+    transition: transform 0.18s var(--ease), box-shadow 0.45s var(--ease), background 0.45s var(--ease);
+}
+
+/* --- Nav link roll --------------------------------------------------- */
+.nav-link .roll {
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: bottom;
+}
+
+.nav-link .roll span {
+    display: block;
+    transition: transform 0.45s var(--ease);
+}
+
+.nav-link .roll span:last-child {
+    position: absolute;
+    inset: 0;
+    color: var(--primary-dark);
+    transform: translateY(100%);
+}
+
+.nav-link:hover .roll span:first-child,
+.nav-link.active .roll span:first-child {
+    transform: translateY(-100%);
+}
+
+.nav-link:hover .roll span:last-child,
+.nav-link.active .roll span:last-child {
     transform: translateY(0);
+}
+
+/* --- Hero scroll response --------------------------------------------- */
+.hero-content {
+    transform: translate3d(0, calc(var(--hero-shift, 0) * 1px), 0);
+    opacity: var(--hero-fade, 1);
+}
+
+.hero-background {
+    transform: scale(var(--hero-zoom, 1)) translate3d(0, calc(var(--hero-bg, 0) * 1px), 0);
+    will-change: transform;
+}
+
+/* --- Section title flourish ------------------------------------------- */
+.title-underline {
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 0.9s var(--ease) 0.3s;
+}
+
+.section-title.visible .title-underline {
+    transform: scaleX(1);
+}
+
+/* --- Skill bar shimmer ------------------------------------------------- */
+.skill-progress {
+    position: relative;
+    overflow: hidden;
+}
+
+.skill-progress::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+    transform: translateX(-100%);
+    animation: skillShimmer 2.4s var(--ease) infinite;
+}
+
+@keyframes skillShimmer {
+    to {
+        transform: translateX(200%);
+    }
+}
+
+/* --- Contact link arrow ------------------------------------------------- */
+.contact-link {
+    position: relative;
+    overflow: hidden;
+}
+
+.contact-link::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(45, 212, 191, 0.16), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.6s var(--ease);
+    pointer-events: none;
+}
+
+.contact-link:hover::after {
+    transform: translateX(0);
+}
+
+/* --- Reduced motion ------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+    .page-loader {
+        display: none;
+    }
+
+    body.is-loading {
+        overflow: auto;
+    }
+
+    .cursor-dot,
+    .cursor-ring {
+        display: none;
+    }
+
+    .split-unit,
+    [data-anim],
+    .fade-in,
+    .stagger-child {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+
+    .marquee-track {
+        transform: none !important;
+    }
+
+    .timeline::before {
+        transform: translateX(-50%) !important;
+    }
+
+    .title-underline {
+        transform: scaleX(1) !important;
+    }
+
+    .skill-progress::after {
+        display: none;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
