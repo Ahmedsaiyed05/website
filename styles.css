@@ -980,7 +980,7 @@ section {
     transition: visibility 0s linear 0.9s;
     /* Last-resort escape hatch: if script.js never runs, the curtain still
        clears itself instead of hiding the site permanently. */
-    animation: loaderFailsafe 0.5s var(--ease) 8s forwards;
+    animation: loaderFailsafe 0.5s var(--ease) 6s forwards;
 }
 
 @keyframes loaderFailsafe {
@@ -1208,8 +1208,12 @@ body.cursor-hover .cursor-dot {
     opacity: 1;
 }
 
-/* --- Generic reveals ------------------------------------------------ */
-[data-anim] {
+/* --- Generic reveals ------------------------------------------------
+   Scoped to .js-ready (set by script.js) so a script failure can never
+   leave HTML-authored elements stuck at opacity 0. The .fade-in,
+   .stagger-child and .split-unit hooks are created by JS, so they are
+   safe without the guard. */
+.js-ready [data-anim] {
     opacity: 0;
     transform: translate3d(0, 26px, 0);
     transition: opacity 0.8s var(--ease), transform 0.9s var(--ease);
@@ -1262,7 +1266,7 @@ body.cursor-hover .cursor-dot {
 
 /* Timeline spine draws as you scroll */
 .timeline::before {
-    transform: translateX(-50%) scaleY(var(--spine, 0));
+    transform: translateX(-50%) scaleY(var(--spine, 1));
     transform-origin: top center;
     transition: transform 0.15s linear;
 }
@@ -1426,7 +1430,7 @@ body.cursor-hover .cursor-dot {
 }
 
 /* --- Section title flourish ------------------------------------------- */
-.title-underline {
+.js-ready .title-underline {
     transform: scaleX(0);
     transform-origin: center;
     transition: transform 0.9s var(--ease) 0.3s;
@@ -1492,12 +1496,21 @@ body.cursor-hover .cursor-dot {
         display: none;
     }
 
+    /* Reduced, not removed. A plain opacity fade carries no vestibular risk,
+       so the page still feels alive here; every movement (translation,
+       parallax, 3D, auto-scroll) is what actually gets dropped. */
     .split-unit,
     [data-anim],
     .fade-in,
     .stagger-child {
-        opacity: 1 !important;
         transform: none !important;
+        transition: opacity 0.5s ease !important;
+        transition-delay: 0s !important;
+    }
+
+    /* Split units only exist when the script ran; nothing should gate on them. */
+    .split-unit {
+        opacity: 1 !important;
     }
 
     .marquee-track {

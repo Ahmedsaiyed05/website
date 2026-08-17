@@ -20,6 +20,9 @@ const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)
 const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
+// Marks that the script is alive, so CSS can safely hide things it will reveal.
+document.body.classList.add('js-ready');
+
 /* ---------------------------------------------------------------------
    Page loader — counts to 100, then lifts the curtain
    ------------------------------------------------------------------ */
@@ -133,8 +136,11 @@ const revealObserver = new IntersectionObserver((entries) => {
         revealObserver.unobserve(entry.target);
     });
 }, {
-    threshold: 0.12,
-    rootMargin: '0px 0px -70px 0px'
+    // threshold 0, not a fraction: cards here can be a full viewport tall, and
+    // a fractional threshold lets such an element sit on screen without ever
+    // reaching the ratio, leaving it stuck invisible.
+    threshold: 0,
+    rootMargin: '0px 0px -60px 0px'
 });
 
 document.querySelectorAll('.glass-card, .timeline-item, .skill-category, .education-card, .highlight-card, .section-title')
