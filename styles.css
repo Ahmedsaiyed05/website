@@ -964,9 +964,9 @@ section {
    ===================================================================== */
 
 /* --- Page loader --------------------------------------------------- */
-body.is-loading {
-    overflow: hidden;
-}
+/* The scroll lock lives in JS (see finishLoading) so that a script failure
+   can never leave the page unscrollable. */
+
 
 .page-loader {
     position: fixed;
@@ -974,8 +974,21 @@ body.is-loading {
     z-index: 3000;
     display: grid;
     place-items: center;
-    background: #050d18;
-    transition: visibility 0s linear 1.05s;
+    /* No background here — the curtain is the only opaque layer, so wiping it
+       actually reveals the page instead of a flat panel underneath. */
+    background: transparent;
+    transition: visibility 0s linear 0.9s;
+    /* Last-resort escape hatch: if script.js never runs, the curtain still
+       clears itself instead of hiding the site permanently. */
+    animation: loaderFailsafe 0.5s var(--ease) 8s forwards;
+}
+
+@keyframes loaderFailsafe {
+    to {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+    }
 }
 
 .page-loader.done {
@@ -992,7 +1005,7 @@ body.is-loading {
         radial-gradient(circle at 75% 80%, rgba(96, 165, 250, 0.16), transparent 46%),
         #050d18;
     transform-origin: top;
-    transition: transform 0.95s var(--ease);
+    transition: transform 0.9s var(--ease);
 }
 
 .page-loader.done .loader-curtain {
@@ -1307,11 +1320,17 @@ body.cursor-hover .cursor-dot {
         rotateX(calc(var(--rx, 0deg) + var(--revealX, 0deg)))
         rotateY(var(--ry, 0deg))
         translate3d(0, calc(var(--ty, 0px) + var(--revealY, 0px)), var(--revealZ, 0px));
-    transition: transform 0.9s var(--ease), box-shadow 0.5s var(--ease), border-color 0.5s var(--ease);
+    /* opacity must be listed here too: this rule outranks the `transition`
+       from [data-anim]/.fade-in, so omitting it makes tilt cards pop in. */
+    transition: transform 0.9s var(--ease), opacity 0.85s var(--ease),
+        box-shadow 0.5s var(--ease), border-color 0.5s var(--ease);
+    transition-delay: var(--anim-delay, 0s);
 }
 
 .tilt-3d.tilting.tilting {
-    transition: transform 0.12s linear, box-shadow 0.5s var(--ease), border-color 0.5s var(--ease);
+    transition: transform 0.12s linear, opacity 0.85s var(--ease),
+        box-shadow 0.5s var(--ease), border-color 0.5s var(--ease);
+    transition-delay: 0s;
 }
 
 [data-anim].tilt-3d {

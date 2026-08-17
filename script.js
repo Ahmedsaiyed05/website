@@ -27,11 +27,22 @@ const pageLoader = document.getElementById('pageLoader');
 const loaderCount = document.getElementById('loaderCount');
 const loaderFill = document.getElementById('loaderFill');
 
+if (pageLoader && !prefersReducedMotion) document.body.style.overflow = 'hidden';
+
+let heroIntroPlayed = false;
+
 function finishLoading() {
+    if (heroIntroPlayed) return;
+    heroIntroPlayed = true;
+
     document.body.classList.remove('is-loading');
+    document.body.style.overflow = '';
     pageLoader?.classList.add('done');
     document.body.classList.add('loaded');
-    playHeroIntro();
+
+    // Hold the hero entrance until the curtain has started lifting, otherwise
+    // the whole reveal plays behind it and the page just appears fully formed.
+    setTimeout(playHeroIntro, prefersReducedMotion ? 0 : 280);
     requestTick();
 }
 
@@ -48,7 +59,7 @@ if (!pageLoader || prefersReducedMotion) {
         const elapsed = now - start;
         // Ease toward 92% on a timer; the last 8% waits for window load.
         const ceiling = pageReady ? 100 : 92;
-        const target = Math.min(ceiling, (1 - Math.pow(1 - Math.min(elapsed / 1400, 1), 2)) * 100);
+        const target = Math.min(ceiling, (1 - Math.pow(1 - Math.min(elapsed / 900, 1), 2)) * 100);
         shown = Math.max(shown, target);
 
         loaderCount.textContent = Math.round(shown);
@@ -57,7 +68,7 @@ if (!pageLoader || prefersReducedMotion) {
         if (shown < 100) {
             requestAnimationFrame(step);
         } else {
-            setTimeout(finishLoading, 260);
+            setTimeout(finishLoading, 140);
         }
     };
     requestAnimationFrame(step);
