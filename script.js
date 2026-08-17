@@ -16,12 +16,27 @@ const heroBackground = document.querySelector('.hero-background');
 const timeline = document.querySelector('.timeline');
 const progressBar = document.querySelector('#scrollProgress i');
 
-const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+// Motion comes from html[data-motion] (set by the inline head script), not
+// straight from the OS query. Full motion is the default everywhere; the nav
+// toggle lets anyone opt out and the choice persists.
+const prefersReducedMotion = document.documentElement.getAttribute('data-motion') === 'reduced';
 const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
-// Marks that the script is alive, so CSS can safely hide things it will reveal.
-document.body.classList.add('js-ready');
+// Confirms to the head script that the motion layer is alive; without this it
+// removes .js-ready again so nothing stays hidden.
+window.__motionReady = true;
+
+// Motion toggle. Reloading is the honest way to apply it: split text, the
+// marquee clones and the observers are all built differently per mode.
+const motionToggle = document.getElementById('motionToggle');
+motionToggle?.setAttribute('aria-pressed', String(prefersReducedMotion));
+motionToggle?.addEventListener('click', () => {
+    const next = prefersReducedMotion ? 'full' : 'reduced';
+    try { localStorage.setItem('motion', next); } catch (e) {}
+    document.documentElement.setAttribute('data-motion', next);
+    location.reload();
+});
 
 /* ---------------------------------------------------------------------
    Page loader — counts to 100, then lifts the curtain

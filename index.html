@@ -8,6 +8,23 @@
     <link rel="preload" as="image" href="assets/devops-bg.png">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%230f766e'/><stop offset='100%25' stop-color='%232563eb'/></linearGradient></defs><rect x='8' y='8' width='84' height='84' rx='16' fill='url(%23g)'/><text x='50' y='62' font-size='36' font-family='Arial' font-weight='700' text-anchor='middle' fill='white'>AS</text></svg>">
     <link rel="stylesheet" href="styles.css">
+    <script>
+        // Runs before first paint so the motion state never flashes.
+        // Defaults to full motion; the nav toggle persists an opt-out.
+        (function () {
+            var pref = null;
+            try { pref = localStorage.getItem('motion'); } catch (e) {}
+            document.documentElement.setAttribute('data-motion', pref === 'reduced' ? 'reduced' : 'full');
+
+            // Reveal states are gated on .js-ready. Set it before first paint so
+            // content never flashes in and back out, then drop it again if
+            // script.js never checks in, so a failure can't hide the page.
+            document.documentElement.classList.add('js-ready');
+            setTimeout(function () {
+                if (!window.__motionReady) document.documentElement.classList.remove('js-ready');
+            }, 4000);
+        })();
+    </script>
 </head>
 <body class="is-loading">
     <!-- Page loader -->
@@ -47,6 +64,14 @@
                 <li><a href="#education" class="nav-link">Education</a></li>
                 <li><a href="#contact" class="nav-link">Contact</a></li>
             </ul>
+            <button class="motion-toggle" id="motionToggle" type="button" aria-pressed="false" title="Toggle animations" aria-label="Toggle animations">
+                <svg class="icon-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <path d="M3 12h3l2-6 4 12 3-9 2 3h4"></path>
+                </svg>
+                <svg class="icon-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <path d="M3 12h18"></path>
+                </svg>
+            </button>
             <div class="hamburger" id="hamburger">
                 <span></span>
                 <span></span>
