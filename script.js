@@ -538,12 +538,13 @@ const animateCounter = (element, target) => {
     const tick = (now) => {
         const progress = Math.min((now - start) / duration, 1);
         const eased = 1 - Math.pow(1 - progress, 3);
-        element.textContent = `${Math.floor(eased * target)}+`;
+        const suffix = element.dataset.suffix !== undefined ? element.dataset.suffix : '+';
+        element.textContent = `${Math.floor(eased * target)}${suffix}`;
 
         if (progress < 1) {
             requestAnimationFrame(tick);
         } else {
-            element.textContent = `${target}+`;
+            element.textContent = `${target}${suffix}`;
         }
     };
 
@@ -665,6 +666,8 @@ function updatePageState() {
         timeline.style.setProperty('--spine', prefersReducedMotion ? 1 : progress);
     }
 
+    updateDeployHistory();
+
     if (srScroll) {
         const limit = maxScroll();
         srScroll.textContent = `${Math.round(limit > 0 ? clamp(scrollY / limit, 0, 1) * 100 : 0)}%`;
@@ -736,6 +739,57 @@ if (srUptime) {
         const ss = String(secs % 60).padStart(2, '0');
         srUptime.textContent = `${mm}:${ss}`;
     }, 1000);
+}
+
+/* ---------------------------------------------------------------------
+   Deploy history — pin the section and drive the runs horizontally
+   ------------------------------------------------------------------ */
+const dhSection = document.querySelector('.deploy-history');
+const dhTrack = document.getElementById('dhTrack');
+const dhProgress = document.getElementById('dhProgress');
+const dhRuns = document.querySelectorAll('.dh-run');
+
+// Bullets stagger in per run.
+dhRuns.forEach(run => {
+    run.querySelectorAll('.dh-log li').forEach((li, i) => li.style.setProperty('--i', i));
+});
+
+// The pin only applies where the layout actually pins; below the breakpoint
+// the section is a normal stack and must not be transformed.
+const dhPinned = () => window.matchMedia('(min-width: 981px)').matches;
+
+function updateDeployHistory() {
+    if (!dhSection || !dhTrack) return;
+
+    if (!dhPinned()) {
+        dhRuns.forEach(run => run.classList.add('is-active'));
+        return;
+    }
+
+    const rect = dhSection.getBoundingClientRect();
+    const distance = dhSection.offsetHeight - window.innerHeight;
+    const progress = clamp(-rect.top / (distance || 1), 0, 1);
+
+    // Travel far enough that the LAST run reaches the same arrival point the
+    // first one started at. Using the track's overflow instead would stop as
+    // soon as its right edge met the viewport, leaving the earliest run stuck
+    // half off-screen and never active.
+    const first = dhRuns[0];
+    const last = dhRuns[dhRuns.length - 1];
+    const travel = Math.max(0, last.offsetLeft - first.offsetLeft);
+    dhTrack.style.setProperty('--dh-x', (progress * travel).toFixed(1));
+    dhProgress?.parentElement.style.setProperty('--dh', progress.toFixed(3));
+
+    // Whichever run is nearest the viewport centre is the live one.
+    const centre = window.innerWidth / 2;
+    let best = 0;
+    let bestGap = Infinity;
+    dhRuns.forEach((run, i) => {
+        const r = run.getBoundingClientRect();
+        const gap = Math.abs(r.left + r.width / 2 - centre);
+        if (gap < bestGap) { bestGap = gap; best = i; }
+    });
+    dhRuns.forEach((run, i) => run.classList.toggle('is-active', i === best));
 }
 
 const footerYear = document.querySelector('.footer-content p');

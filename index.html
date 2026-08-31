@@ -99,7 +99,7 @@
         </div>
         <div class="hero-content">
             <div class="hero-text">
-                <p class="greeting" data-anim="fade" data-delay="0.1">DevOps &amp; Cloud Security &middot; Surat, IN</p>
+                <p class="greeting" data-anim="fade" data-delay="0.1">Cloud Infrastructure &amp; CI/CD Automation &middot; Surat, IN</p>
                 <h1 class="hero-name" data-split="char" data-delay="0.2">Ahmed Saiyed</h1>
                 <h2 class="hero-title" data-anim="fade" data-delay="0.5">
                     <span class="ht-lead">I</span>
@@ -113,7 +113,7 @@
                     </span>
                     <span class="ht-tail">cloud infrastructure</span>
                 </h2>
-                <p class="hero-tagline" data-split="word" data-delay="0.6">Passionate About Safeguarding Digital Environments &amp; Enhancing Cybersecurity</p>
+                <p class="hero-tagline" data-split="word" data-delay="0.6">Secure, automated cloud infrastructure across GCP, AWS, Hetzner and DigitalOcean.</p>
                 <div class="hero-buttons" data-anim="fade" data-delay="0.85">
                     <a href="#contact" class="btn btn-primary magnetic">Get In Touch</a>
                     <a href="#experience" class="btn btn-secondary magnetic">View My Work</a>
@@ -167,26 +167,27 @@
                     <div class="glass-card">
                         <h3>Professional Summary</h3>
                         <p>
-                            As a Cloud Security Analyst and DevOps Engineer, I bring hands-on experience in managing and securing cloud infrastructure,
-                            and building CI/CD pipelines for smooth deployment. During my internship I contributed to automating deployments, applying
-                            security best practices, and hosting scalable applications using infrastructure as code.
+                            DevOps engineer specializing in secure, automated cloud infrastructure across GCP, AWS,
+                            Hetzner and DigitalOcean, with hands-on strength in CI/CD pipelines, containerization
+                            and workflow automation.
                         </p>
                         <p>
-                            I'm passionate about building secure, scalable systems while maintaining a strong focus on continuous learning, collaboration,
-                            and overall well-being. I specialize in AWS, DevSecOps, automation, and cybersecurity practices.
+                            I deploy and run production workloads on Linux, containerize services onto Cloud Run,
+                            provision with Terraform and Ansible, and wire security scanning into the pipeline so
+                            releases stay fast without giving up ground on hardening.
                         </p>
                         <div class="about-stats">
                             <div class="stat-item">
-                                <span class="stat-number" data-target="20">0</span>
-                                <span class="stat-label">Projects Delivered</span>
+                                <span class="stat-number" data-target="4" data-suffix="">0</span>
+                                <span class="stat-label">Cloud Platforms</span>
                             </div>
                             <div class="stat-item">
-                                <span class="stat-number" data-target="2">0</span>
-                                <span class="stat-label">Years Experience</span>
+                                <span class="stat-number" data-target="40" data-suffix="%">0</span>
+                                <span class="stat-label">Faster Deployments</span>
                             </div>
                             <div class="stat-item">
-                                <span class="stat-number" data-target="10">0</span>
-                                <span class="stat-label">Security Certifications</span>
+                                <span class="stat-number" data-target="10" data-suffix="h">0</span>
+                                <span class="stat-label">Saved Per Week</span>
                             </div>
                         </div>
                     </div>
@@ -227,71 +228,88 @@
         </div>
     </section>
 
-    <!-- Experience Section -->
-    <section id="experience" class="experience">
-        <div class="container">
-            <h2 class="section-title">
-                <span class="title-text" data-scramble>Work Experience</span>
-                <span class="title-underline"></span>
-            </h2>
-            <div class="timeline">
-                <div class="timeline-item">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content glass-card">
-                        <div class="timeline-date">Dec 2025 - Present</div>
+    <!-- Experience Section: scroll-pinned deploy history -->
+    <section id="experience" class="experience deploy-history">
+        <div class="dh-sticky">
+            <div class="container">
+                <h2 class="section-title">
+                    <span class="title-text" data-scramble>Deploy History</span>
+                    <span class="title-underline"></span>
+                </h2>
+                <div class="dh-rail" aria-hidden="true">
+                    <i id="dhProgress"></i>
+                </div>
+                <p class="dh-hint" aria-hidden="true">scroll to advance &rarr;</p>
+            </div>
+            <div class="dh-track" id="dhTrack">
+
+                <article class="dh-run" data-run="03">
+                    <header class="dh-run-head">
+                        <span class="dh-meta">run 03 &middot; current</span>
                         <h3>DevOps Engineer</h3>
-                        <h4>EnactOn Technologies Private Limited</h4>
-                        <p>
-                            Working as a DevOps Engineer leveraging PHP frameworks, n8n automation, and modern DevOps practices
-                            to build scalable infrastructure and streamline deployment processes.
-                        </p>
-                        <ul>
-                            <li>Building and maintaining CI/CD pipelines for automated deployments</li>
-                            <li>Implementing infrastructure as code and automation solutions</li>
-                            <li>Collaborating on cloud architecture and security best practices</li>
-                        </ul>
+                        <h4>EnactOn Technologies Pvt. Ltd.</h4>
+                        <span class="dh-dates">Dec 2025 &mdash; Present</span>
+                    </header>
+                    <ul class="dh-log">
+                        <li>Deployed and managed Next.js applications on Linux with PM2 behind an Nginx reverse proxy, SSL/TLS via Cloudflare, holding ~99.9% uptime.</li>
+                        <li>Led emergency response to an AWS Gulf-region outage, migrating EC2 workloads cross-region by snapshotting and copying EBS volumes with minimal downtime.</li>
+                        <li>Containerized a monolithic server application into a multi-image Docker build on GCP Cloud Run, cutting deployment time by ~40%.</li>
+                        <li>Rolled out self-hosted applications with Coolify across Hetzner and DigitalOcean, lowering hosting costs by ~30%.</li>
+                        <li>Automated internal processes and third-party integrations with n8n, saving the team ~10 hours per week.</li>
+                        <li>Built and maintained GitHub Actions CI/CD pipelines across projects, improving release consistency by ~50%.</li>
+                    </ul>
+                    <div class="dh-metrics">
+                        <span class="dh-metric"><b class="stat-number" data-target="99" data-suffix=".9%">0</b>uptime</span>
+                        <span class="dh-metric"><b class="stat-number" data-target="40" data-suffix="%">0</b>faster deploys</span>
+                        <span class="dh-metric"><b class="stat-number" data-target="30" data-suffix="%">0</b>lower cost</span>
+                        <span class="dh-metric"><b class="stat-number" data-target="10" data-suffix="h">0</b>saved weekly</span>
                     </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content glass-card">
-                        <div class="timeline-date">Jun 2024 - Dec 2025</div>
-                        <h3>Cloud Operations</h3>
+                </article>
+
+                <article class="dh-run" data-run="02">
+                    <header class="dh-run-head">
+                        <span class="dh-meta">run 02</span>
+                        <h3>Cloud Operations Associate</h3>
                         <h4>Cybersecurity Umbrella</h4>
-                        <p>
-                            Led cloud infrastructure management and security operations with extensive experience in AWS,
-                            DevSecOps, and automated deployments.
-                        </p>
-                        <ul>
-                            <li>Deployed .NET Web API with MS SQL Server on AWS Windows EC2 using IIS with static IP configuration</li>
-                            <li>Secured AWS environments through IAM roles, VPC design, Security Groups, and CloudTrail/GuardDuty logging</li>
-                            <li>Built secure web applications using S3, CloudFront, Route 53, and AWS WAF with HTTPS enforcement</li>
-                            <li>Integrated DevSecOps practices into CI/CD pipelines using Jenkins and GitHub Actions</li>
-                            <li>Automated infrastructure provisioning with Terraform (WordPress on AWS: EC2, RDS, IAM, networking)</li>
-                            <li>Deployed full-stack SOC dashboard (Django + React) on Windows with Nginx reverse proxy</li>
-                            <li>Hosted and trained ML models on AWS SageMaker with scalable endpoints for real-time inference</li>
-                            <li>Implemented Cloudflare CDN services and managed DNS systems for products</li>
-                        </ul>
+                        <span class="dh-dates">Jun 2024 &mdash; Dec 2025</span>
+                    </header>
+                    <ul class="dh-log">
+                        <li>Orchestrated deployment and security of .NET Web APIs, WordPress and SOC dashboards on AWS using IIS, EC2 and Nginx.</li>
+                        <li>Automated infrastructure provisioning with Terraform for consistent, repeatable deployments.</li>
+                        <li>Implemented CI/CD pipelines with Jenkins and GitHub Actions, accelerating release cycles.</li>
+                        <li>Integrated DevSecOps practices across AWS VPC, IAM and GuardDuty to harden the estate.</li>
+                    </ul>
+                    <div class="dh-metrics">
+                        <span class="dh-metric"><b class="stat-number" data-target="35" data-suffix="%">0</b>reliability</span>
+                        <span class="dh-metric"><b class="stat-number" data-target="40" data-suffix="%">0</b>fewer errors</span>
+                        <span class="dh-metric"><b class="stat-number" data-target="50" data-suffix="%">0</b>faster releases</span>
+                        <span class="dh-metric"><b class="stat-number" data-target="25" data-suffix="%">0</b>fewer vulns</span>
                     </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content glass-card">
-                        <div class="timeline-date">Dec 2023 - May 2024</div>
+                </article>
+
+                <article class="dh-run" data-run="01">
+                    <header class="dh-run-head">
+                        <span class="dh-meta">run 01 &middot; first deploy</span>
                         <h3>Intern</h3>
                         <h4>Cybersecurity Umbrella</h4>
-                        <p>
-                            Started career as an intern focusing on cloud security and ethical hacking practices.
-                            Gained hands-on experience in security operations and threat analysis.
-                        </p>
-                        <ul>
-                            <li>Learned cloud security fundamentals and best practices</li>
-                            <li>Gained practical experience in ethical hacking methodologies</li>
-                            <li>Assisted with security operations center (SOC) tasks</li>
-                            <li>Developed strong foundation in identity and access management</li>
-                        </ul>
+                        <span class="dh-dates">Dec 2023 &mdash; Jun 2024</span>
+                    </header>
+                    <ul class="dh-log">
+                        <li>Architected AWS solutions and hardened cloud security across the environment.</li>
+                        <li>Ran penetration testing and IAM governance, uncovering vulnerabilities across 10+ systems.</li>
+                    </ul>
+                    <div class="dh-metrics">
+                        <span class="dh-metric"><b class="stat-number" data-target="25" data-suffix="%">0</b>security uplift</span>
+                        <span class="dh-metric"><b class="stat-number" data-target="10" data-suffix="+">0</b>systems audited</span>
                     </div>
-                </div>
+                </article>
+
+                <aside class="dh-end" aria-hidden="true">
+                    <span class="dh-meta">end of history</span>
+                    <p>Started Dec 2023. Three runs, zero rollbacks worth talking about.</p>
+                    <span class="dh-end-mark">&#9632;</span>
+                </aside>
+
             </div>
         </div>
     </section>
@@ -305,110 +323,62 @@
             </h2>
             <div class="skills-grid">
                 <div class="skill-category glass-card">
-                    <h3>Cloud Platforms</h3>
-                    <div class="skill-list">
-                        <div class="skill-item">
-                            <span class="skill-name">Amazon Web Services (AWS)</span>
-                            <div class="skill-bar">
-                                <div class="skill-progress" data-progress="90"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <span class="skill-name">Google Cloud Platform (GCP)</span>
-                            <div class="skill-bar">
-                                <div class="skill-progress" data-progress="80"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <span class="skill-name">DigitalOcean</span>
-                            <div class="skill-bar">
-                                <div class="skill-progress" data-progress="75"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <span class="skill-name">Hetzner</span>
-                            <div class="skill-bar">
-                                <div class="skill-progress" data-progress="70"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="skill-category glass-card">
-                    <h3>DevOps & Automation</h3>
-                    <div class="skill-list">
-                        <div class="skill-item">
-                            <span class="skill-name">Docker</span>
-                            <div class="skill-bar">
-                                <div class="skill-progress" data-progress="90"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <span class="skill-name">Terraform</span>
-                            <div class="skill-bar">
-                                <div class="skill-progress" data-progress="85"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <span class="skill-name">Jenkins / GitHub Actions</span>
-                            <div class="skill-bar">
-                                <div class="skill-progress" data-progress="88"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <span class="skill-name">Git</span>
-                            <div class="skill-bar">
-                                <div class="skill-progress" data-progress="92"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="skill-category glass-card">
-                    <h3>Web Servers & Tools</h3>
-                    <div class="skill-list">
-                        <div class="skill-item">
-                            <span class="skill-name">Nginx</span>
-                            <div class="skill-bar">
-                                <div class="skill-progress" data-progress="85"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <span class="skill-name">Linux Administration</span>
-                            <div class="skill-bar">
-                                <div class="skill-progress" data-progress="90"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <span class="skill-name">Cloudflare CDN</span>
-                            <div class="skill-bar">
-                                <div class="skill-progress" data-progress="80"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <span class="skill-name">Vagrant</span>
-                            <div class="skill-bar">
-                                <div class="skill-progress" data-progress="75"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="skill-category glass-card">
-                    <h3>Security & Development</h3>
+                    <h3>Cloud &amp; Platforms</h3>
                     <div class="skill-tags">
-                        <span class="skill-tag">Cloud Security</span>
-                        <span class="skill-tag">Ethical Hacking</span>
-                        <span class="skill-tag">Identity & Access Management (IAM)</span>
-                        <span class="skill-tag">Security Operations Center (SOC)</span>
-                        <span class="skill-tag">Threat Analysis</span>
-                        <span class="skill-tag">Kali Linux</span>
-                        <span class="skill-tag">Python</span>
-                        <span class="skill-tag">PHP Frameworks</span>
-                        <span class="skill-tag">Cybersecurity Tools</span>
-                        <span class="skill-tag">DevSecOps</span>
-                        <span class="skill-tag">n8n Automation</span>
-                        <span class="skill-tag">Google Workspace</span>
+                        <span class="skill-tag">AWS</span>
+                        <span class="skill-tag">GCP</span>
+                        <span class="skill-tag">Hetzner</span>
+                        <span class="skill-tag">DigitalOcean</span>
+                        <span class="skill-tag">Cloud Run</span>
+                        <span class="skill-tag">Vercel</span>
+                        <span class="skill-tag">Render</span>
+                        <span class="skill-tag">Railway</span>
+                        <span class="skill-tag">Cloudflare Workers</span>
                     </div>
                 </div>
-            </div>
+                <div class="skill-category glass-card">
+                    <h3>CI/CD &amp; Infrastructure as Code</h3>
+                    <div class="skill-tags">
+                        <span class="skill-tag">GitHub Actions</span>
+                        <span class="skill-tag">GitLab CI</span>
+                        <span class="skill-tag">Jenkins</span>
+                        <span class="skill-tag">Terraform</span>
+                        <span class="skill-tag">Ansible</span>
+                        <span class="skill-tag">Docker</span>
+                        <span class="skill-tag">Coolify</span>
+                        <span class="skill-tag">PM2</span>
+                    </div>
+                </div>
+                <div class="skill-category glass-card">
+                    <h3>Security &amp; Scanning</h3>
+                    <div class="skill-tags">
+                        <span class="skill-tag">IAM</span>
+                        <span class="skill-tag">GuardDuty</span>
+                        <span class="skill-tag">CloudTrail</span>
+                        <span class="skill-tag">KMS</span>
+                        <span class="skill-tag">Inspector</span>
+                        <span class="skill-tag">Trivy</span>
+                        <span class="skill-tag">Snyk</span>
+                        <span class="skill-tag">SonarQube</span>
+                    </div>
+                </div>
+                <div class="skill-category glass-card">
+                    <h3>Servers, Scripting &amp; Automation</h3>
+                    <div class="skill-tags">
+                        <span class="skill-tag">Nginx</span>
+                        <span class="skill-tag">Apache</span>
+                        <span class="skill-tag">IIS</span>
+                        <span class="skill-tag">Linux</span>
+                        <span class="skill-tag">Bash</span>
+                        <span class="skill-tag">Python</span>
+                        <span class="skill-tag">Node.js</span>
+                        <span class="skill-tag">Git</span>
+                        <span class="skill-tag">n8n</span>
+                        <span class="skill-tag">Zapier</span>
+                        <span class="skill-tag">Route 53</span>
+                        <span class="skill-tag">Cloudflare</span>
+                    </div>
+                </div>
         </div>
     </section>
 
@@ -444,16 +414,16 @@
                         <h3>Professional Certifications</h3>
                         <ul class="certifications">
                             <li>
-                                <strong>Claude Code in Action</strong>
-                                <span>Anthropic - Feb 2026</span>
+                                <strong>Ethical Hacking Essentials (EHE)</strong>
+                                <span>EC-Council</span>
                             </li>
                             <li>
-                                <strong>SQL Injection Attacks</strong>
-                                <span>EC-Council - Apr 2024</span>
+                                <strong>Cloud Security &amp; IAM Security</strong>
+                                <span>Certification</span>
                             </li>
                             <li>
-                                <strong>Cyber Security 101</strong>
-                                <span>TryHackMe - 2025</span>
+                                <strong>OWASP Top 10 &middot; Webbed &middot; Hash Cracker</strong>
+                                <span>TryHackMe</span>
                             </li>
                         </ul>
                     </div>

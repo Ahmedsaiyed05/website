@@ -2020,3 +2020,253 @@ body.loaded .status-rail {
 [data-scramble] .scr-ghost {
     color: var(--amber);
 }
+
+/* =====================================================================
+   Deploy history — the experience section as a scroll-driven pipeline
+   ===================================================================== */
+.deploy-history {
+    /* Scroll distance for the horizontal travel: one screen per run, plus
+       a screen of lead-in. JS reads this element's height, so changing the
+       run count only means changing this number. */
+    height: 400vh;
+    padding: 0;
+}
+
+.dh-sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+    /* Clear the fixed navbar and the status rail; without this the centred
+       column tucks its title underneath the nav. */
+    padding: 96px 0 52px;
+}
+
+.deploy-history .section-title {
+    margin-bottom: 1.2rem;
+}
+
+.dh-rail {
+    position: relative;
+    height: 2px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    overflow: hidden;
+}
+
+.dh-rail i {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: var(--accent);
+    transform: scaleX(var(--dh, 0));
+    transform-origin: left;
+}
+
+.dh-hint {
+    margin-top: 0.6rem;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.dh-track {
+    display: flex;
+    gap: clamp(1.2rem, 3vw, 2.4rem);
+    align-items: stretch;
+    margin-top: clamp(1.4rem, 4vh, 2.6rem);
+    padding: 0 max(20px, calc((100vw - var(--container)) / 2));
+    will-change: transform;
+    transform: translate3d(calc(var(--dh-x, 0) * -1px), 0, 0);
+}
+
+.dh-run {
+    flex: 0 0 auto;
+    width: min(680px, 82vw);
+    display: flex;
+    flex-direction: column;
+    padding: clamp(1.3rem, 3vw, 2.1rem);
+    border: 1px solid var(--line);
+    border-left: 2px solid rgba(255, 255, 255, 0.16);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    transition: border-color 0.5s var(--ease), background 0.5s var(--ease), opacity 0.5s var(--ease);
+    opacity: 0.42;
+}
+
+.dh-run.is-active {
+    opacity: 1;
+    border-left-color: var(--accent);
+}
+
+.dh-meta {
+    display: inline-block;
+    margin-bottom: 0.7rem;
+    color: var(--accent);
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.dh-run-head h3 {
+    color: var(--ink);
+    font-family: var(--display);
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+}
+
+.dh-run-head h4 {
+    margin-top: 0.2rem;
+    color: var(--text);
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.dh-dates {
+    display: block;
+    margin: 0.35rem 0 1.1rem;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 0.74rem;
+}
+
+.dh-log {
+    flex: 1;
+    list-style: none;
+    display: grid;
+    gap: 0.6rem;
+    margin: 0 0 1.2rem;
+    padding: 0;
+}
+
+.dh-log li {
+    position: relative;
+    padding-left: 1.3rem;
+    color: var(--muted);
+    font-size: 0.92rem;
+    line-height: 1.55;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.5s var(--ease), transform 0.5s var(--ease);
+    transition-delay: calc(var(--i, 0) * 0.07s);
+}
+
+.dh-run.is-active .dh-log li {
+    opacity: 1;
+    transform: none;
+}
+
+/* Log-line marker, matching the boot screen's vernacular. */
+.dh-log li::before {
+    content: "\203A";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-family: var(--mono);
+}
+
+.dh-metrics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
+}
+
+.dh-metric {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    padding: 0.45rem 0.7rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    white-space: nowrap;
+}
+
+.dh-metric b {
+    color: var(--ink);
+    font-family: var(--display);
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+/* Below the breakpoint the pin is dropped entirely: the runs stack and
+   reveal like any other section, which is the right call on a touch device. */
+@media (max-width: 980px) {
+    .deploy-history {
+        height: auto;
+        padding: clamp(4rem, 8vw, 6.5rem) 0;
+    }
+
+    .dh-sticky {
+        position: static;
+        height: auto;
+        overflow: visible;
+        padding: 0;
+    }
+
+    .dh-track {
+        flex-direction: column;
+        padding: 0 20px;
+        transform: none !important;
+    }
+
+    .dh-run {
+        width: auto;
+        opacity: 1;
+    }
+
+    .dh-run .dh-log li {
+        opacity: 1;
+        transform: none;
+    }
+
+    .dh-hint,
+    .dh-rail {
+        display: none;
+    }
+}
+
+/* Closing panel: fills the space once the earliest run has arrived, so the
+   pin ends on a deliberate beat instead of trailing whitespace. */
+.dh-end {
+    flex: 0 0 auto;
+    width: min(560px, 62vw);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: clamp(1.3rem, 3vw, 2.1rem);
+    border: 1px dashed var(--line);
+    border-radius: var(--radius-lg);
+    color: var(--muted);
+}
+
+.dh-end p {
+    max-width: 32ch;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    line-height: 1.6;
+}
+
+.dh-end-mark {
+    color: var(--accent);
+    font-size: 0.7rem;
+}
+
+@media (max-width: 980px) {
+    .dh-end { width: auto; }
+}
