@@ -434,6 +434,46 @@ if (marqueeTrack && !prefersReducedMotion) {
 }
 
 /* ---------------------------------------------------------------------
+   Tech stack ticker — same loop as the marquee, two rows, opposite ways
+   ------------------------------------------------------------------ */
+document.querySelectorAll('.stack-row').forEach((row, index) => {
+    if (prefersReducedMotion) return;
+
+    const group = row.querySelector('.stack-group');
+    if (!group) return;
+
+    let offset = index === 0 ? 0 : -200;   // stagger so rows do not line up
+    let groupWidth = 0;
+
+    const build = () => {
+        row.querySelectorAll('.stack-group').forEach((node, i) => { if (i > 0) node.remove(); });
+        groupWidth = group.getBoundingClientRect().width;
+        if (!groupWidth) return;
+        const copies = Math.ceil(window.innerWidth / groupWidth) + 1;
+        for (let i = 0; i < copies; i += 1) row.appendChild(group.cloneNode(true));
+    };
+
+    build();
+    window.addEventListener('resize', build);
+
+    const dir = Number(row.dataset.dir || 1);
+    const render = () => {
+        // Scroll velocity nudges the rows, so they feel tied to the page.
+        const speed = 0.45 + Math.min(Math.abs(scrollVelocity) * 0.035, 3.2);
+        offset -= speed * dir;
+
+        if (groupWidth) {
+            if (offset <= -groupWidth) offset += groupWidth;
+            if (offset > 0) offset -= groupWidth;
+        }
+
+        row.style.setProperty('--tx', `${offset.toFixed(1)}px`);
+        requestAnimationFrame(render);
+    };
+    requestAnimationFrame(render);
+});
+
+/* ---------------------------------------------------------------------
    Smooth (lerped) scrolling — desktop wheel only, native everywhere else
    ------------------------------------------------------------------ */
 const smoothScroll = {

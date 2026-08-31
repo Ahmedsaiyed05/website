@@ -2315,3 +2315,79 @@ body.loaded .status-rail {
     height: 0.78em;
     opacity: 0.7;
 }
+
+/* =====================================================================
+   Tech stack ticker — two rows of large marks, travelling opposite ways
+   ===================================================================== */
+.stack-band {
+    position: relative;
+    padding: clamp(2.6rem, 6vw, 4.2rem) 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    background: var(--bg-alt);
+    overflow: hidden;
+    /* Bare marks on a dark ground, so fading the ends sells the loop. */
+    mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+}
+
+.stack-rows {
+    display: grid;
+    gap: clamp(1.6rem, 4vw, 2.8rem);
+}
+
+.stack-row {
+    display: flex;
+    width: max-content;
+    will-change: transform;
+    transform: translate3d(var(--tx, 0px), 0, 0);
+}
+
+.stack-group {
+    display: flex;
+    align-items: center;
+    gap: clamp(2.2rem, 5vw, 4rem);
+    padding-right: clamp(2.2rem, 5vw, 4rem);
+    flex: 0 0 auto;
+}
+
+.stack-ico {
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    color: rgba(255, 255, 255, 0.4);
+    cursor: default;
+    transition: color 0.4s var(--ease), transform 0.4s var(--ease);
+}
+
+.stack-ico svg {
+    width: clamp(34px, 4.6vw, 56px);
+    height: clamp(34px, 4.6vw, 56px);
+    fill: currentColor;
+}
+
+.stack-ico:hover {
+    color: var(--accent);
+    transform: scale(1.14);
+}
+
+/* The second row sits back a little so the two read as layers, not a grid. */
+.stack-row[data-dir="-1"] .stack-ico {
+    color: rgba(255, 255, 255, 0.26);
+}
+
+.stack-row[data-dir="-1"] .stack-ico:hover {
+    color: var(--accent);
+}
+
+html[data-motion="reduced"] .stack-row {
+    transform: none !important;
+    flex-wrap: wrap;
+    width: auto;
+    justify-content: center;
+}
+
+html[data-motion="reduced"] .stack-group {
+    flex-wrap: wrap;
+    justify-content: center;
+}
