@@ -1,18 +1,18 @@
 /* Professional DevOps portfolio styles */
 :root {
-    --bg: #000000;
-    --bg-alt: #060606;
-    --surface: rgba(12, 12, 12, 0.86);
-    --surface-strong: #0a0a0a;
-    --ink: #ffffff;
-    --text: #d2d2d2;
-    --muted: #8c8c8c;
-    --line: rgba(255, 255, 255, 0.18);
-    --primary: #ffffff;
-    --primary-dark: #f2f2f2;
-    --secondary: #9a9a9a;
-    --accent: #ffb000;
-    --success: #22c55e;
+    --bg: #0b0d10;
+    --bg-alt: #101318;
+    --surface: rgba(19, 22, 27, 0.88);
+    --surface-strong: #101318;
+    --ink: #f4f2ee;
+    --text: #c7cad0;
+    --muted: #858a93;
+    --line: rgba(255, 255, 255, 0.11);
+    --primary: #f4f2ee;
+    --primary-dark: #ffffff;
+    --secondary: #7f8590;
+    --accent: #7fa88b;
+    --success: #7fa88b;
     --shadow: 0 28px 80px rgba(0, 0, 0, 0.42);
     --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.28);
     --ease: cubic-bezier(0.22, 1, 0.36, 1);
@@ -24,9 +24,10 @@
     --body: "IBM Plex Sans", "Segoe UI", Roboto, Arial, sans-serif;
     --mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
 
-    /* Amber phosphor, not neon. --pass is semantic only: it means passing. */
-    --amber: #ffb000;
-    --pass: #3ddc84;
+    /* One muted sage accent. It doubles as the pass state, which is honest:
+       in this subject green already means healthy. */
+    --amber: #7fa88b;
+    --pass: #7fa88b;
     --radius: 8px;
     --radius-lg: 14px;
     --container: 1180px;
@@ -85,7 +86,7 @@ a {
 }
 
 ::-webkit-scrollbar-track {
-    background: #000000;
+    background: #0b0d10;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -207,8 +208,8 @@ a {
     align-items: center;
     padding: 108px 0 86px;
     overflow: hidden;
-    color: #ffffff;
-    background: #000000;
+    color: var(--ink);
+    background: var(--bg);
 }
 
 .hero-background {
@@ -973,7 +974,7 @@ section {
 .footer {
     padding: 2rem 0;
     color: #b4b4b4;
-    background: #000000;
+    background: #0b0d10;
 }
 
 .footer-content {
@@ -1897,8 +1898,8 @@ html[data-motion="reduced"] .motion-toggle .icon-off { display: block; }
     width: max-content;
     height: 1.24em;
     padding: 0 0.34em;
-    color: #000000;
-    background: var(--amber);
+    color: #0b0d10;
+    background: var(--accent);
     line-height: 1.24em;
     white-space: nowrap;
 }
@@ -1993,13 +1994,13 @@ body.loaded .status-rail {
 /* --- Marquee, louder ---------------------------------------------------- */
 .marquee {
     padding: 1.4rem 0;
-    background: var(--amber);
+    background: var(--ink);
     border-top: 0;
     border-bottom: 0;
 }
 
 .marquee-item {
-    color: #000000;
+    color: #0b0d10;
     font-size: clamp(1.6rem, 4.4vw, 3.2rem);
     font-weight: 800;
     letter-spacing: -0.035em;
@@ -2007,7 +2008,7 @@ body.loaded .status-rail {
 }
 
 .marquee-sep {
-    color: rgba(0, 0, 0, 0.42);
+    color: rgba(11, 13, 16, 0.38);
     font-size: clamp(1rem, 2.4vw, 1.6rem);
 }
 
