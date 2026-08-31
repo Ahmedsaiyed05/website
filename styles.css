@@ -1,18 +1,18 @@
 /* Professional DevOps portfolio styles */
 :root {
-    --bg: #0b0d10;
-    --bg-alt: #101318;
-    --surface: rgba(19, 22, 27, 0.88);
-    --surface-strong: #101318;
-    --ink: #f4f2ee;
-    --text: #c7cad0;
-    --muted: #858a93;
-    --line: rgba(255, 255, 255, 0.11);
-    --primary: #f4f2ee;
+    --bg: #0b0e11;
+    --bg-alt: #12161b;
+    --surface: rgba(18, 22, 27, 0.9);
+    --surface-strong: #12161b;
+    --ink: #e6e8ea;
+    --text: #c2c7ce;
+    --muted: #939ba5;
+    --line: rgba(255, 255, 255, 0.09);
+    --primary: #e6e8ea;
     --primary-dark: #ffffff;
-    --secondary: #7f8590;
-    --accent: #7fa88b;
-    --success: #7fa88b;
+    --secondary: #7c828c;
+    --accent: #b98150;
+    --success: #6f9e82;
     --shadow: 0 28px 80px rgba(0, 0, 0, 0.42);
     --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.28);
     --ease: cubic-bezier(0.22, 1, 0.36, 1);
@@ -24,10 +24,12 @@
     --body: "IBM Plex Sans", "Segoe UI", Roboto, Arial, sans-serif;
     --mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
 
-    /* One muted sage accent. It doubles as the pass state, which is honest:
-       in this subject green already means healthy. */
-    --amber: #7fa88b;
-    --pass: #7fa88b;
+    /* Bronze is the interactive accent. Green is no longer decorative: it is
+       reserved for genuine status (online, passed), so colour carries meaning
+       instead of just filling space. --raised is the third surface level. */
+    --raised: #1a1f26;
+    --amber: #b98150;
+    --pass: #6f9e82;
     --radius: 8px;
     --radius-lg: 14px;
     --container: 1180px;
@@ -86,7 +88,7 @@ a {
 }
 
 ::-webkit-scrollbar-track {
-    background: #0b0d10;
+    background: #0b0e11;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -599,6 +601,7 @@ section {
 
 .glass-card:hover,
 .highlight-card:hover {
+    background: var(--raised);
     transform: translateY(-5px);
     border-color: rgba(255, 255, 255, 0.32);
     box-shadow: var(--shadow);
@@ -634,7 +637,7 @@ section {
 .stat-item {
     padding: 1rem;
     border-radius: var(--radius);
-    background: rgba(0, 0, 0, 0.64);
+    background: var(--raised);
     border: 1px solid var(--line);
     text-align: center;
 }
@@ -892,9 +895,9 @@ section {
     justify-content: space-between;
     gap: 1rem;
     padding: 0.8rem;
-    border-left: 3px solid var(--primary);
+    border-left: 3px solid var(--accent);
     border-radius: 8px;
-    background: rgba(0, 0, 0, 0.52);
+    background: var(--raised);
 }
 
 .certifications li span {
@@ -922,7 +925,7 @@ section {
     border: 1px solid var(--line);
     border-radius: 8px;
     color: var(--ink);
-    background: rgba(0, 0, 0, 0.58);
+    background: var(--raised);
     text-decoration: none;
     transition: transform 0.45s var(--ease), border-color 0.45s var(--ease), box-shadow 0.45s var(--ease), background 0.45s var(--ease);
 }
@@ -944,7 +947,7 @@ section {
     border: 1px solid var(--line);
     border-radius: 8px;
     color: var(--ink);
-    background: rgba(0, 0, 0, 0.72);
+    background: var(--raised);
     font: inherit;
     transition: border-color 0.45s var(--ease), box-shadow 0.45s var(--ease), background 0.45s var(--ease);
 }
@@ -974,7 +977,7 @@ section {
 .footer {
     padding: 2rem 0;
     color: #b4b4b4;
-    background: #0b0d10;
+    background: #0b0e11;
 }
 
 .footer-content {
@@ -1898,7 +1901,7 @@ html[data-motion="reduced"] .motion-toggle .icon-off { display: block; }
     width: max-content;
     height: 1.24em;
     padding: 0 0.34em;
-    color: #0b0d10;
+    color: #0b0e11;
     background: var(--accent);
     line-height: 1.24em;
     white-space: nowrap;
@@ -2000,7 +2003,7 @@ body.loaded .status-rail {
 }
 
 .marquee-item {
-    color: #0b0d10;
+    color: #0b0e11;
     font-size: clamp(1.6rem, 4.4vw, 3.2rem);
     font-weight: 800;
     letter-spacing: -0.035em;
