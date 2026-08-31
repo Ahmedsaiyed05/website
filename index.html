@@ -7,6 +7,9 @@
     <meta name="description" content="Ahmed Saiyed portfolio for DevOps engineering, cloud security, automation, and infrastructure delivery.">
     <link rel="preload" as="image" href="assets/devops-bg.png">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%230f766e'/><stop offset='100%25' stop-color='%232563eb'/></linearGradient></defs><rect x='8' y='8' width='84' height='84' rx='16' fill='url(%23g)'/><text x='50' y='62' font-size='36' font-family='Arial' font-weight='700' text-anchor='middle' fill='white'>AS</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
     <link rel="stylesheet" href="styles.css">
     <script>
         // Runs before first paint so the motion state never flashes.
@@ -30,14 +33,18 @@
     <!-- Page loader -->
     <div class="page-loader" id="pageLoader" aria-hidden="true">
         <div class="loader-inner">
-            <div class="loader-word" id="loaderWord">
-                <span>Ahmed</span>
-                <span>Saiyed</span>
+            <div class="boot-head">
+                <span class="boot-repo">ahmedsaiyed/site</span>
+                <span class="boot-branch">main</span>
             </div>
-            <div class="loader-meta">
-                <span class="loader-label">Building environment</span>
-                <span class="loader-count" id="loaderCount">0</span>
-            </div>
+            <ol class="boot-stages" id="bootStages">
+                <li data-stage="checkout"><span>checkout</span><i>queued</i></li>
+                <li data-stage="plan"><span>terraform plan</span><i>queued</i></li>
+                <li data-stage="build"><span>docker build</span><i>queued</i></li>
+                <li data-stage="scan"><span>security scan</span><i>queued</i></li>
+                <li data-stage="deploy"><span>deploy</span><i>queued</i></li>
+            </ol>
+            <pre class="boot-log" id="bootLog"></pre>
             <div class="loader-bar"><i id="loaderFill"></i></div>
         </div>
         <div class="loader-curtain"></div>
@@ -83,18 +90,29 @@
     <!-- Hero Section -->
     <section id="home" class="hero">
         <div class="hero-background">
-            <div class="floating-shapes">
-                <div class="shape shape-1"></div>
-                <div class="shape shape-2"></div>
-                <div class="shape shape-3"></div>
-                <div class="shape shape-4"></div>
+            <div class="hero-chips" aria-hidden="true">
+                <span class="chip" data-depth="26" style="top:13%;left:3%">terraform apply</span>
+                <span class="chip" data-depth="44" style="top:20%;right:4%">kubectl get pods</span>
+                <span class="chip" data-depth="18" style="bottom:22%;left:4%">aws iam</span>
+                <span class="chip" data-depth="36" style="bottom:13%;right:5%">nginx -t</span>
             </div>
         </div>
         <div class="hero-content">
             <div class="hero-text">
-                <p class="greeting" data-anim="fade" data-delay="0.1">Hello, I'm</p>
+                <p class="greeting" data-anim="fade" data-delay="0.1">DevOps &amp; Cloud Security &middot; Surat, IN</p>
                 <h1 class="hero-name" data-split="char" data-delay="0.2">Ahmed Saiyed</h1>
-                <h2 class="hero-title" data-anim="fade" data-delay="0.5">DevOps Engineer | Cloud Security Analyst</h2>
+                <h2 class="hero-title" data-anim="fade" data-delay="0.5">
+                    <span class="ht-lead">I</span>
+                    <span class="role-cycle" id="roleCycle" aria-label="ship, secure, automate and scale">
+                        <span class="role-track">
+                            <span class="role-word">ship</span>
+                            <span class="role-word">secure</span>
+                            <span class="role-word">automate</span>
+                            <span class="role-word">scale</span>
+                        </span>
+                    </span>
+                    <span class="ht-tail">cloud infrastructure</span>
+                </h2>
                 <p class="hero-tagline" data-split="word" data-delay="0.6">Passionate About Safeguarding Digital Environments &amp; Enhancing Cybersecurity</p>
                 <div class="hero-buttons" data-anim="fade" data-delay="0.85">
                     <a href="#contact" class="btn btn-primary magnetic">Get In Touch</a>
@@ -141,7 +159,7 @@
     <section id="about" class="about">
         <div class="container">
             <h2 class="section-title">
-                <span class="title-text" data-split="char">About Me</span>
+                <span class="title-text" data-scramble>About Me</span>
                 <span class="title-underline"></span>
             </h2>
             <div class="about-content">
@@ -213,7 +231,7 @@
     <section id="experience" class="experience">
         <div class="container">
             <h2 class="section-title">
-                <span class="title-text" data-split="char">Work Experience</span>
+                <span class="title-text" data-scramble>Work Experience</span>
                 <span class="title-underline"></span>
             </h2>
             <div class="timeline">
@@ -282,7 +300,7 @@
     <section id="skills" class="skills">
         <div class="container">
             <h2 class="section-title">
-                <span class="title-text" data-split="char">Skills & Expertise</span>
+                <span class="title-text" data-scramble>Skills & Expertise</span>
                 <span class="title-underline"></span>
             </h2>
             <div class="skills-grid">
@@ -398,7 +416,7 @@
     <section id="education" class="education">
         <div class="container">
             <h2 class="section-title">
-                <span class="title-text" data-split="char">Education</span>
+                <span class="title-text" data-scramble>Education</span>
                 <span class="title-underline"></span>
             </h2>
             <div class="education-grid">
@@ -448,7 +466,7 @@
     <section id="contact" class="contact">
         <div class="container">
             <h2 class="section-title">
-                <span class="title-text" data-split="char">Get In Touch</span>
+                <span class="title-text" data-scramble>Get In Touch</span>
                 <span class="title-underline"></span>
             </h2>
             <div class="contact-content">
@@ -522,6 +540,15 @@
             </div>
         </div>
     </footer>
+
+    <!-- Terminal status rail -->
+    <div class="status-rail" id="statusRail" aria-hidden="true">
+        <span class="sr-item"><i class="sr-dot"></i>online</span>
+        <span class="sr-item sr-path" id="srPath">~/home</span>
+        <span class="sr-item sr-grow" id="srMsg">ready</span>
+        <span class="sr-item" id="srUptime">00:00</span>
+        <span class="sr-item" id="srScroll">0%</span>
+    </div>
 
     <script src="script.js" defer></script>
 </body>

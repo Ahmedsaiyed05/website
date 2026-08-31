@@ -15,6 +15,11 @@ const heroContent = document.querySelector('.hero-content');
 const heroBackground = document.querySelector('.hero-background');
 const timeline = document.querySelector('.timeline');
 const progressBar = document.querySelector('#scrollProgress i');
+const chips = document.querySelectorAll('.chip');
+const srPath = document.getElementById('srPath');
+const srMsg = document.getElementById('srMsg');
+const srScroll = document.getElementById('srScroll');
+const srUptime = document.getElementById('srUptime');
 
 // Motion comes from html[data-motion] (set by the inline head script), not
 // straight from the OS query. Full motion is the default everywhere; the nav
@@ -42,8 +47,9 @@ motionToggle?.addEventListener('click', () => {
    Page loader — counts to 100, then lifts the curtain
    ------------------------------------------------------------------ */
 const pageLoader = document.getElementById('pageLoader');
-const loaderCount = document.getElementById('loaderCount');
 const loaderFill = document.getElementById('loaderFill');
+const bootStages = document.getElementById('bootStages');
+const bootLog = document.getElementById('bootLog');
 
 if (pageLoader && !prefersReducedMotion) document.body.style.overflow = 'hidden';
 
@@ -64,37 +70,141 @@ function finishLoading() {
     requestTick();
 }
 
+/* The load screen is a deploy. Each stage runs, logs, and passes; the last one
+   ships the page. Log lines are cosmetic but they use this site's real stack. */
+const BOOT = [
+    { stage: 'checkout', ms: 260, log: ['fetching origin/main', 'HEAD at 96feaf3'] },
+    { stage: 'plan', ms: 340, log: ['reading tfstate', '12 to add, 0 to destroy'] },
+    { stage: 'build', ms: 380, log: ['layer 3/5 cached', 'image sha256:8f21c4'] },
+    { stage: 'scan', ms: 320, log: ['0 critical, 0 high', 'policy gate passed'] },
+    { stage: 'deploy', ms: 300, log: ['uploading assets', 'live on ahmedsaiyed.site'] }
+];
+
 if (!pageLoader || prefersReducedMotion) {
     document.body.classList.remove('is-loading');
     window.addEventListener('load', finishLoading, { once: true });
 } else {
-    let shown = 0;
-    let pageReady = false;
-    window.addEventListener('load', () => { pageReady = true; }, { once: true });
+    const rows = Array.from(bootStages?.querySelectorAll('li') || []);
+    const lines = [];
 
-    const start = performance.now();
-    const step = (now) => {
-        const elapsed = now - start;
-        // Ease toward 92% on a timer; the last 8% waits for window load.
-        const ceiling = pageReady ? 100 : 92;
-        const target = Math.min(ceiling, (1 - Math.pow(1 - Math.min(elapsed / 900, 1), 2)) * 100);
-        shown = Math.max(shown, target);
-
-        loaderCount.textContent = Math.round(shown);
-        loaderFill.style.width = `${shown}%`;
-
-        if (shown < 100) {
-            requestAnimationFrame(step);
-        } else {
-            setTimeout(finishLoading, 140);
-        }
+    const pushLog = (text) => {
+        lines.push(text);
+        if (lines.length > 3) lines.shift();
+        if (bootLog) bootLog.innerHTML = lines.map(l => `<b>&rsaquo;</b> ${l}`).join('\n');
     };
-    requestAnimationFrame(step);
+
+    const runStage = (index) => {
+        if (index >= BOOT.length) {
+            setTimeout(finishLoading, 180);
+            return;
+        }
+
+        const { ms, log } = BOOT[index];
+        const row = rows[index];
+        row?.setAttribute('data-state', 'run');
+        if (row) row.querySelector('i').textContent = 'running';
+        pushLog(log[0]);
+
+        setTimeout(() => pushLog(log[1]), ms * 0.55);
+        setTimeout(() => {
+            row?.setAttribute('data-state', 'pass');
+            if (row) row.querySelector('i').textContent = 'passed';
+            if (loaderFill) loaderFill.style.width = `${((index + 1) / BOOT.length) * 100}%`;
+            runStage(index + 1);
+        }, ms);
+    };
+
+    runStage(0);
 
     // Safety net: never trap the page behind the loader.
     setTimeout(() => {
         if (document.body.classList.contains('is-loading')) finishLoading();
-    }, 5000);
+    }, 6000);
+}
+
+/* ---------------------------------------------------------------------
+   Cycling role word
+   ------------------------------------------------------------------ */
+const roleCycle = document.getElementById('roleCycle');
+
+if (roleCycle && !prefersReducedMotion) {
+    const words = roleCycle.querySelectorAll('.role-word');
+    const track = roleCycle.querySelector('.role-track');
+    let roleIndex = 0;
+
+    // Width follows the current word so the box hugs it instead of jumping.
+    // Measured with getBoundingClientRect for sub-pixel accuracy, plus a 1px
+    // buffer, otherwise the last glyph gets shaved off.
+    // Grow instantly, shrink late. If the box merely transitioned to the new
+    // width, it would still be at the previous (narrower) width while the
+    // incoming word slides in, shaving glyphs off for half a second.
+    let shrinkTimer;
+
+    const sizeToWord = (immediate) => {
+        const next = Math.ceil(words[roleIndex % words.length].getBoundingClientRect().width) + 1;
+        const current = roleCycle.getBoundingClientRect().width;
+        clearTimeout(shrinkTimer);
+
+        if (immediate || next >= current) {
+            roleCycle.style.transition = 'none';
+            roleCycle.style.width = `${next}px`;
+            void roleCycle.offsetWidth;          // commit before restoring easing
+            roleCycle.style.transition = '';
+        } else {
+            shrinkTimer = setTimeout(() => {
+                roleCycle.style.width = `${next}px`;
+            }, 720);                              // after the word has landed
+        }
+    };
+
+    // Measuring before the webfonts land gives fallback metrics and a box that
+    // clips the word, so wait for the real faces first.
+    if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(() => sizeToWord(true));
+    }
+    setTimeout(() => sizeToWord(true), 400);
+    window.addEventListener('resize', () => sizeToWord(true));
+    window.addEventListener('load', () => sizeToWord(true));
+
+    setInterval(() => {
+        roleIndex += 1;
+        track.style.setProperty('--role', roleIndex % words.length);
+        sizeToWord();
+    }, 2200);
+}
+
+/* ---------------------------------------------------------------------
+   Scramble-in headings — the subject's own vernacular, decoded
+   ------------------------------------------------------------------ */
+const SCRAMBLE_CHARS = '$_/<>[]{}#*01';
+
+function scrambleIn(element) {
+    if (element.dataset.scrambled) return;
+    element.dataset.scrambled = 'true';
+
+    const text = element.textContent;
+    const start = performance.now();
+    const duration = 620 + text.length * 34;
+
+    const tick = (now) => {
+        const progress = Math.min((now - start) / duration, 1);
+        const settled = Math.floor(progress * text.length);
+        let out = '';
+
+        for (let i = 0; i < text.length; i += 1) {
+            if (i < settled || text[i] === ' ') {
+                out += text[i];
+            } else {
+                out += SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)];
+            }
+        }
+
+        element.textContent = out;
+        if (progress < 1) requestAnimationFrame(tick);
+        else element.textContent = text;
+    };
+
+    requestAnimationFrame(tick);
 }
 
 /* ---------------------------------------------------------------------
@@ -148,6 +258,7 @@ const revealObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (!entry.isIntersecting) return;
         entry.target.classList.add('visible', 'in', 'split-in', 'stagger-in');
+        if (entry.target.hasAttribute('data-scramble')) scrambleIn(entry.target);
         revealObserver.unobserve(entry.target);
     });
 }, {
@@ -172,6 +283,10 @@ document.querySelectorAll('[data-anim]').forEach(element => {
 
 splitTargets.forEach(element => {
     if (!hero?.contains(element)) revealObserver.observe(element);
+});
+
+document.querySelectorAll('[data-scramble]').forEach(element => {
+    if (!prefersReducedMotion) revealObserver.observe(element);
 });
 
 // Staggered children inside grids and tag clouds.
@@ -539,7 +654,9 @@ function updatePageState() {
         const sectionTop = section.offsetTop - 110;
         const sectionBottom = sectionTop + section.offsetHeight;
         const link = document.querySelector(`.nav-link[href="#${section.id}"]`);
-        link?.classList.toggle('active', scrollY >= sectionTop && scrollY < sectionBottom);
+        const isActive = scrollY >= sectionTop && scrollY < sectionBottom;
+        link?.classList.toggle('active', isActive);
+        if (isActive) updateRail(section.id);
     });
 
     if (timeline) {
@@ -548,10 +665,21 @@ function updatePageState() {
         timeline.style.setProperty('--spine', prefersReducedMotion ? 1 : progress);
     }
 
+    if (srScroll) {
+        const limit = maxScroll();
+        srScroll.textContent = `${Math.round(limit > 0 ? clamp(scrollY / limit, 0, 1) * 100 : 0)}%`;
+    }
+
     if (prefersReducedMotion) {
         if (scrollVelocity !== 0) requestTick();
         return;
     }
+
+    chips.forEach(chip => {
+        const depth = Number(chip.dataset.depth || 20);
+        chip.style.setProperty('--cx', `${((latestMouseX - 0.5) * depth).toFixed(1)}px`);
+        chip.style.setProperty('--cy', `${((latestMouseY - 0.5) * depth - scrollY * depth * 0.004).toFixed(1)}px`);
+    });
 
     // Hero drifts away with depth as you leave it.
     if (hero && heroContent) {
@@ -577,6 +705,38 @@ window.addEventListener('load', () => {
     requestTick();
     if (!pageLoader || prefersReducedMotion) playHeroIntro();
 });
+
+/* ---------------------------------------------------------------------
+   Status rail — reports where you are, in the subject's own idiom
+   ------------------------------------------------------------------ */
+const RAIL_COPY = {
+    home: ['~/home', 'all systems operational'],
+    about: ['~/about', 'reading profile'],
+    experience: ['~/experience', 'deploy history: 3 roles'],
+    skills: ['~/skills', 'capability matrix loaded'],
+    education: ['~/education', 'certifications verified'],
+    contact: ['~/contact', 'accepting connections']
+};
+
+let railSection = '';
+
+function updateRail(id) {
+    if (!srPath || id === railSection) return;
+    railSection = id;
+    const entry = RAIL_COPY[id] || [`~/${id}`, 'ready'];
+    srPath.textContent = entry[0];
+    if (srMsg) srMsg.textContent = entry[1];
+}
+
+if (srUptime) {
+    const bootedAt = Date.now();
+    setInterval(() => {
+        const secs = Math.floor((Date.now() - bootedAt) / 1000);
+        const mm = String(Math.floor(secs / 60)).padStart(2, '0');
+        const ss = String(secs % 60).padStart(2, '0');
+        srUptime.textContent = `${mm}:${ss}`;
+    }, 1000);
+}
 
 const footerYear = document.querySelector('.footer-content p');
 if (footerYear) {
