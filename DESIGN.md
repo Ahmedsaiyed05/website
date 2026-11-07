@@ -20,9 +20,13 @@ copy and artwork here are original.
 - Spacing: 4px base; section padding 24px x 16px (mobile) / 32px x 24px.
 
 ## Motion
-- One signature moment: packets travelling the pipeline drawing in the cover (3s loop).
-- Hover: links underline, buttons darken, rows tint. No scroll-reveal, no parallax.
-- `prefers-reduced-motion` disables the pipeline animation.
+- Signature moment: canvas CI/CD conveyor in the cover (`fx.js`). Commits ride a belt through
+  build → test → scan → deploy gates; ~20% fail tests and ~12% fail the scan, turn red and drop off;
+  the rest ship to prod. Live log + shipped/rejected counters.
+- Entrance stagger, letter-by-letter name, typed tagline, scroll reveal, count-up stats,
+  smooth accordions, cursor spotlight, footer wordmark with a light that follows the cursor.
+- Brand logos (Simple Icons, CC0, `assets/icons/`) are masked to brand colour at 1em beside skills.
+- Full motion by default; the nav toggle stores `motion=reduced` in localStorage to opt out.
 
 ## Banned
 Purple/blue gradients, emoji icons, fake badges/metrics, glow effects, cards in cards,

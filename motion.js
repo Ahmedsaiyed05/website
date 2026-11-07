@@ -1,8 +1,19 @@
 // Motion layer: entrance, scroll reveal, count-up, smooth accordions, hover spotlight, progress bar.
 (function () {
   'use strict';
-  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  document.documentElement.classList.add('motion');
+  var root = document.documentElement;
+  var reduce = root.getAttribute('data-motion') === 'reduced';
+  root.classList.add('motion');
+
+  // Motion toggle: full motion by default, opt-out is remembered and applied on reload
+  var mt = document.getElementById('motionToggle');
+  if (mt) {
+    mt.setAttribute('aria-pressed', reduce ? 'true' : 'false');
+    mt.addEventListener('click', function () {
+      try { localStorage.setItem('motion', reduce ? 'full' : 'reduced'); } catch (e) {}
+      location.reload();
+    });
+  }
 
   // Staggered entrance for the top of the page
   ['.cover', '.profile__avatar', '.profile__id p', '.overview .facts li', '.status', '.social a'].forEach(function (sel) {

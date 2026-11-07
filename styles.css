@@ -30,7 +30,7 @@
 @media (min-width: 640px) { :root { --pad: 24px; } }
 
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: 64px; }
+html { scroll-padding-top: 64px; }
 body {
   margin: 0;
   background: var(--bg);
@@ -62,7 +62,7 @@ h1, h2, h3, h4 { margin: 0; line-height: 1.2; letter-spacing: -0.02em; }
 .screen-line::after {
   content: "";
   position: absolute;
-  left: -100vw; right: -100vw; bottom: 0;
+  left: calc(50% - 50vw); width: 100vw; bottom: 0;
   height: 1px;
   background: var(--line);
   pointer-events: none;
@@ -94,7 +94,7 @@ h1, h2, h3, h4 { margin: 0; line-height: 1.2; letter-spacing: -0.02em; }
 
 /* Cover */
 .cover {
-  height: clamp(120px, 26vw, 200px); overflow: hidden;
+  height: clamp(220px, 34vw, 280px); overflow: hidden;
   background-image: radial-gradient(var(--line) 1px, transparent 1px);
   background-size: 16px 16px;
   background-position: 8px 8px;
@@ -232,7 +232,3 @@ h1, h2, h3, h4 { margin: 0; line-height: 1.2; letter-spacing: -0.02em; }
 .footer p { margin: 0; }
 .footer a { color: var(--fg); }
 
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  *, *::before, *::after { transition: none !important; }
-}

@@ -21,6 +21,10 @@
       try { t = localStorage.getItem('theme'); } catch (e) {}
       if (!t) t = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
       document.documentElement.setAttribute('data-theme', t);
+      // Full motion by default (the site's pipeline is the point); the nav toggle stores an opt-out.
+      var m = null;
+      try { m = localStorage.getItem('motion'); } catch (e) {}
+      document.documentElement.setAttribute('data-motion', m === 'reduced' ? 'reduced' : 'full');
     })();
   </script>
 </head>
@@ -58,6 +62,10 @@
       </nav>
       <div class="topbar__tools">
         <a class="icon-btn" href="https://github.com/Ahmedsaiyed05" target="_blank" rel="noopener" aria-label="GitHub profile"><svg><use href="#i-github"/></svg></a>
+        <button class="icon-btn" id="motionToggle" type="button" aria-label="Reduce motion" title="Toggle animations">
+          <svg class="t-play" viewBox="0 0 24 24"><path d="M6 4v16M18 4v16M6 12h12"/><circle cx="12" cy="12" r="2.5"/></svg>
+          <svg class="t-still" viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+        </button>
         <button class="icon-btn" id="themeToggle" type="button" aria-label="Toggle colour theme">
           <svg class="t-sun"><use href="#i-sun"/></svg><svg class="t-moon"><use href="#i-moon"/></svg>
         </button>
@@ -68,19 +76,7 @@
   <main id="main" class="rail">
     <!-- Cover: a deploy pipeline drawn as a schematic -->
     <section class="cover screen-line" id="top" aria-hidden="true">
-      <svg class="pipeline" viewBox="0 0 768 200" preserveAspectRatio="xMidYMid meet">
-        <path id="wire" class="wire" d="M60 100 H708"/>
-        <path class="wire wire--branch" d="M396 100 V52 H560 V100"/>
-        <g class="stage" transform="translate(48 82)"><rect width="104" height="36" rx="4"/><text x="52" y="22">checkout</text></g>
-        <g class="stage" transform="translate(188 82)"><rect width="104" height="36" rx="4"/><text x="52" y="22">terraform</text></g>
-        <g class="stage" transform="translate(328 82)"><rect width="104" height="36" rx="4"/><text x="52" y="22">docker build</text></g>
-        <g class="stage" transform="translate(452 34)"><rect width="104" height="36" rx="4"/><text x="52" y="22">trivy scan</text></g>
-        <g class="stage" transform="translate(508 82)"><rect width="104" height="36" rx="4"/><text x="52" y="22">deploy</text></g>
-        <g class="stage stage--ok" transform="translate(640 82)"><rect width="88" height="36" rx="4"/><text x="44" y="22">● live</text></g>
-        <circle class="packet" r="3"><animateMotion dur="3s" repeatCount="indefinite"><mpath href="#wire"/></animateMotion></circle>
-        <circle class="packet" r="3"><animateMotion dur="3s" begin="1.5s" repeatCount="indefinite"><mpath href="#wire"/></animateMotion></circle>
-        <text class="fig" x="752" y="190" text-anchor="end">PIPELINE_01</text>
-      </svg>
+      <canvas id="belt" class="belt"></canvas>
     </section>
 
     <!-- Profile -->
@@ -271,11 +267,27 @@
 
     <footer class="footer screen-line">
       <p class="mono muted">© <span id="year">2026</span> Ahmed Saiyed · Surat, India</p>
-      <p class="mono muted">Layout inspired by <a href="https://yash14.com/" target="_blank" rel="noopener">yash14.com</a></p>
+      <p class="mono muted">Layout inspired by <a href="https://yash14.com/" target="_blank" rel="noopener">yash14.com</a> · Logos: <a href="https://simpleicons.org/" target="_blank" rel="noopener">Simple Icons</a></p>
     </footer>
   </main>
 
+  <div class="wordmark" aria-hidden="true">
+    <svg viewBox="0 0 1000 220" preserveAspectRatio="xMidYMin meet">
+      <defs>
+        <radialGradient id="wmSpot" gradientUnits="userSpaceOnUse" cx="500" cy="120" r="230">
+          <stop offset="0" stop-color="#22d3ee"/>
+          <stop offset=".35" stop-color="#34d399"/>
+          <stop offset=".65" stop-color="#f59e0b"/>
+          <stop offset="1" stop-color="#ef4444" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <text class="wm-base" x="500" y="200" text-anchor="middle">SAIYED</text>
+      <text class="wm-glow" x="500" y="200" text-anchor="middle" stroke="url(#wmSpot)">SAIYED</text>
+    </svg>
+  </div>
+
   <script src="script.js" defer></script>
   <script src="motion.js" defer></script>
+  <script src="fx.js" defer></script>
 </body>
 </html>
