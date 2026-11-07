@@ -30,7 +30,7 @@
 @media (min-width: 640px) { :root { --pad: 24px; } }
 
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-padding-top: 64px; }
+html { scroll-padding-top: 64px; overflow-x: clip; }
 body {
   margin: 0;
   background: var(--bg);
@@ -232,3 +232,34 @@ h1, h2, h3, h4 { margin: 0; line-height: 1.2; letter-spacing: -0.02em; }
 .footer p { margin: 0; }
 .footer a { color: var(--fg); }
 
+
+/* ===================== Wide screens: use the side space ===================== */
+@media (min-width: 1100px) {
+  :root { --rail: 1080px; --pad: 32px; }
+  .facts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  /* Spec-sheet layout: section title in a sticky left column, content on the right */
+  .block {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr);
+    column-gap: 40px;
+    align-items: start;
+    padding-block: 40px 44px;
+  }
+  .block > * { grid-column: 2; }
+  .block > h2 {
+    grid-column: 1; grid-row: 1 / span 30;
+    position: sticky; top: 80px;
+    margin: 0; font-size: 28px;
+  }
+  .stack { margin: 0; border-top: 0; }
+  .stack > div { padding-inline: 0; }
+  .stack > div:first-child { padding-top: 4px; }
+  .prose, .bullets { max-width: 72ch; }
+  .lead { max-width: 60ch; }
+  .subhead:first-of-type { margin-top: 28px; }
+  .footer { padding-inline: var(--pad); }
+}
+@media (min-width: 1600px) {
+  :root { --rail: 1200px; }
+  .block { grid-template-columns: 260px minmax(0, 1fr); column-gap: 56px; }
+}

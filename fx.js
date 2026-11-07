@@ -20,7 +20,9 @@
     'Apache': ['apache', '#D22128'], 'IIS': ['microsoft', null], 'Route 53': ['amazonroute53', '#8C4FFF'],
     'Bash': ['gnubash', '#4EAA25'], 'Python': ['python', '#3776AB'], 'Node.js': ['nodedotjs', '#339933'],
     'Git': ['git', '#F05032'], 'n8n': ['n8n', '#EA4B71'], 'Zapier': ['zapier', '#FF4F00'],
-    'AWS EC2': ['amazonec2', '#FF9900'], 'EC2': ['amazonec2', '#FF9900']
+    'AWS EC2': ['amazonec2', '#FF9900'], 'EC2': ['amazonec2', '#FF9900'],
+    'Google Cloud Ops Agent': ['googlecloud', '#4285F4'], 'Uptime Kuma': ['uptimekuma', '#5CDD8B'],
+    'ClickUp': ['clickup', '#7B68EE'], 'Next.js': ['nextdotjs', null]
   };
   document.querySelectorAll('.chip').forEach(function (chip) {
     var hit = ICONS[chip.textContent.trim()];
