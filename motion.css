@@ -79,3 +79,47 @@ html:not([data-motion="reduced"]) { scroll-behavior: smooth; }
 /* Press feedback: controls feel weighted (Invisible Details) */
 .btn:active, .icon-btn:active, .social a:active, .role summary:active { transform: scale(.97); }
 .icon-btn, .social a { transition: transform .12s ease, background .15s ease; }
+
+/* ---------- ruler.js: scroll ruler in the left gutter ---------- */
+:root { --accent: #ff6a1a; }
+:root[data-theme="light"] { --accent: #ea580c; }
+.ruler { display: none; }
+@media (min-width: 1400px) {
+  .ruler {
+    display: block; position: fixed; z-index: 40;
+    left: max(12px, calc((100vw - var(--rail)) / 2 - 170px));
+    top: 18vh; height: 64vh; width: 130px;
+    touch-action: none; user-select: none;
+  }
+}
+.ruler__track { position: absolute; inset: 0 auto 0 14px; width: 116px; cursor: ns-resize; }
+.ruler__tick {
+  position: absolute; left: 0; height: 1px;
+  width: calc(10px + var(--m, 0) * 16px);
+  background: var(--muted);
+  opacity: calc(.35 + var(--m, 0) * .65);
+  transition: width .18s cubic-bezier(.2,.7,.2,1), opacity .18s;
+}
+.ruler__tick.is-major { width: calc(20px + var(--m, 0) * 12px); opacity: calc(.7 + var(--m, 0) * .3); background: var(--fg); }
+.ruler__label {
+  position: absolute; left: 34px; transform: translateY(-50%);
+  font-size: 10px; letter-spacing: .02em; color: var(--muted); white-space: nowrap;
+  padding: 2px 4px; border-radius: 4px;
+  transition: color .2s, transform .25s cubic-bezier(.2,.7,.2,1);
+}
+.ruler__label b { font-weight: 500; opacity: .6; }
+.ruler__label:hover { color: var(--fg); text-decoration: none; transform: translate(3px, -50%); }
+.ruler__label.is-active { color: var(--fg); transform: translate(4px, -50%); }
+.ruler__label.is-active b { color: var(--accent); opacity: 1; }
+.ruler__pointer { position: absolute; left: 0; top: 0; height: 0; will-change: transform; pointer-events: none; }
+.ruler__tri {
+  position: absolute; left: 0; top: -4px; width: 0; height: 0;
+  border-top: 4px solid transparent; border-bottom: 4px solid transparent; border-left: 7px solid var(--accent);
+}
+.ruler__read {
+  position: absolute; left: -2px; top: 7px; font-size: 9.5px; color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+.ruler__ghost { position: absolute; left: 14px; top: 0; width: 34px; height: 1px; background: var(--fg); opacity: 0; pointer-events: none; transition: opacity .15s; }
+.ruler.is-hover .ruler__ghost { opacity: .5; }
+[data-motion="reduced"] .ruler__tick, [data-motion="reduced"] .ruler__label { transition: none; }
