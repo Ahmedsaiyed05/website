@@ -1,0 +1,55 @@
+/* Motion layer — loaded after styles.css. Everything is disabled under prefers-reduced-motion. */
+@keyframes rise { from { opacity: 0; transform: translateY(14px); filter: blur(6px); } to { opacity: 1; transform: none; filter: blur(0); } }
+@keyframes letter { from { opacity: 0; transform: translateY(0.5em) rotate(4deg); filter: blur(4px); } to { opacity: 1; transform: none; filter: blur(0); } }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes pop { from { opacity: 0; scale: .85; } to { opacity: 1; scale: 1; } }
+@keyframes hatch { to { background-position: 32px 0; } }
+@keyframes pulse { 0%,100% { box-shadow: 0 0 0 3px color-mix(in srgb, var(--ok) 25%, transparent); } 50% { box-shadow: 0 0 0 7px color-mix(in srgb, var(--ok) 0%, transparent); } }
+@keyframes stageOn { 0%, 30%, 100% { stroke: var(--muted); stroke-opacity: .7; } 8%, 20% { stroke: var(--fg); stroke-opacity: 1; } }
+@keyframes ring { to { transform: rotate(360deg); } }
+@keyframes caret { 50% { opacity: 0; } }
+
+.motion .load { opacity: 0; animation: rise .7s cubic-bezier(.2,.7,.2,1) forwards; animation-delay: calc(var(--i, 0) * 80ms + 100ms); }
+.motion .profile h1 .ch { display: inline-block; opacity: 0; animation: letter .6s cubic-bezier(.2,.7,.2,1) forwards; animation-delay: calc(var(--c) * 35ms + 350ms); }
+.motion .stage { opacity: 0; transform-box: fill-box; transform-origin: center; animation: pop .5s ease forwards; animation-delay: calc(var(--s) * 120ms + 200ms); }
+.motion .stage rect { animation: stageOn 3s linear infinite; animation-delay: calc(var(--s) * 0.5s + 1s); }
+.motion .wire { stroke-dasharray: 700; stroke-dashoffset: 700; animation: draw 1.6s ease forwards .2s; }
+.motion .wire.drawn { stroke-dasharray: 3 4; stroke-dashoffset: 0; animation: none; }
+.status__dot { animation: pulse 2.4s ease-in-out infinite; }
+.hatch { animation: hatch 6s linear infinite; }
+
+.profile__avatar { position: relative; }
+.profile__avatar::before { content: ""; position: absolute; inset: -7px; border-radius: 999px; border: 1px dashed var(--muted); opacity: .55; animation: ring 24s linear infinite; }
+.profile__avatar img { transition: transform .4s ease; }
+.profile__avatar:hover img { transform: scale(1.05); }
+
+.typed::after { content: "▍"; margin-left: 2px; animation: caret 1s steps(1) infinite; }
+
+.motion .reveal { opacity: 0; transform: translateY(18px); filter: blur(4px); transition: opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1), filter .7s ease; transition-delay: calc(var(--i, 0) * 60ms); }
+.motion .reveal.in { opacity: 1; transform: none; filter: none; }
+
+.chip { transition: transform .15s ease, border-color .15s ease, color .15s ease; }
+.chip:hover { transform: translateY(-2px); border-color: var(--muted); color: var(--fg); }
+.facts li > svg, .role__icon, .certs svg { transition: color .2s ease, border-color .2s ease, transform .2s ease; }
+.facts li:hover > svg, .role summary:hover .role__icon, .certs li:hover svg { color: var(--fg); border-color: var(--muted); transform: rotate(-8deg); }
+.stack > div { transition: background .2s ease; }
+.stack > div:hover { background: var(--hover); }
+.social a { position: relative; overflow: hidden; }
+.social a::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(180px circle at var(--mx, 50%) var(--my, 50%), color-mix(in srgb, var(--fg) 9%, transparent), transparent 70%); opacity: 0; transition: opacity .25s; }
+.social a:hover::before { opacity: 1; }
+.nav a { position: relative; transition: color .2s; }
+.nav a::after { content: ""; position: absolute; left: 0; right: 0; bottom: -4px; height: 1px; background: var(--fg); transform: scaleX(0); transform-origin: right; transition: transform .25s ease; }
+.nav a:hover::after, .nav a.active::after { transform: scaleX(1); transform-origin: left; }
+.nav a.active { color: var(--fg); }
+.role__body { overflow: hidden; }
+.stats dd { font-variant-numeric: tabular-nums; }
+.mark { transition: background .2s, color .2s, transform .2s; }
+.mark:hover { transform: rotate(-6deg); }
+.progress { position: fixed; top: 0; left: 0; height: 2px; width: 100%; background: var(--fg); transform-origin: 0 50%; transform: scaleX(0); z-index: 60; pointer-events: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .motion .stage { opacity: 1 !important; animation: none !important; }
+  .motion .load, .motion .reveal, .motion .profile h1 .ch { opacity: 1 !important; transform: none !important; filter: none !important; animation: none !important; }
+  .motion .wire { stroke-dasharray: 3 4; stroke-dashoffset: 0; animation: none; }
+  .hatch, .status__dot, .profile__avatar::before, .stage rect, .typed::after { animation: none !important; }
+}
